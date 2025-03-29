@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../Images/favicon.jpg"> 
+    <title>Payment</title>
+</head>
+<body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+  
+        body {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    padding: 40px;
+    width: 30%;
+    margin: 10% auto;
+    border-radius: 8px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    height: 34%;
+    text-align: center;
+}
+
+.modal-content h2{
+  padding: 15px;
+}
+
+.modal-content p{
+  padding: 15px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: rgb(0, 0, 0);
+}
+
+.modal button {
+    background-color: #05675d;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 30%;
+    margin-top: 10px;
+}
+
+.modal button:hover {
+    background-color: #0d5554;
+}
+
+.main-content {
+    max-width: 100%;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.payment-section {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding: 1rem;
+    text-align: center;
+    width: 600px;
+    margin-left: 20px;
+}
+
+.payment-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #007c7c;
+}
+
+.section {
+    background-color: #e2f5f5;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: left;
+    height: 2000px;
+}
+
+.collapsible-payment {
+    margin-bottom: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+
+.collapsible-payment-upi {
+    margin-bottom: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+
+.collapsible-label {
+    display: block;
+    padding: 0.8rem 1rem;
+    background-color: #007c7c;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: left;
+    transition: background 0.3s;
+}
+
+.collapsible-label:hover {
+    background-color: #005f5f;
+}
+
+.collapsible-payment input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.collapsible-payment-upi input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.collapsible-content {
+    max-height: 0px;
+    overflow: hidden;
+    transition: max-height 0.1s ease;
+    background-color: #f7fbfb;
+    padding: 0 1rem;
+}
+
+.collapsible-content-upi {
+    max-height: 0px;
+    overflow: hidden;
+    transition: max-height 0.1s ease;
+    background-color: #f7fbfb;
+    padding: 0 1rem;
+}
+
+.collapsible-payment input[type="checkbox"]:checked ~ .collapsible-content {
+    max-height: 800px;
+    padding: 1rem;
+}
+
+.collapsible-payment-upi input[type="checkbox"]:checked ~ .collapsible-content-upi {
+    max-height: 800px;
+    padding: 1rem;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 2px;
+}
+
+.section-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.payable-amount {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.payment-options {
+    text-align: left;
+    margin: 1.5rem 0;
+}
+
+.payment-options h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.payment-method {
+    display: flex;
+    align-items: center;
+    background-color: #e2f5f5;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    gap: 20px;
+}
+
+.payment-method input[type="radio"] {
+    margin-right: 0.5rem;
+    transform: scale(2);
+}
+
+.payment-method img {
+    width: 30px;
+    height: 30px;
+    margin-right: 0.5rem;
+}
+
+.payment-method span {
+    font-size: 1rem;
+}
+
+.payment-method:hover {
+    background-color: #cdeff0;
+}
+
+.upi-id-btn {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #007c7c;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.upi-id-btn:hover {
+    background-color: #005f5f;
+    transform: scale(1.03);
+}
+
+.proceed-btn {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 0.75rem 2rem;
+    background-color: #007c7c;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.proceed-btn:hover {
+    background-color: #005f5f;
+    transform: scale(1.03);
+}
+
+button#close{
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none; 
+    cursor: pointer;
+}
+@media (max-width: 1200px) {
+    .payment-section {
+        width: 80%;
+        margin-left: 0;
+    }
+
+    .section {
+        height: auto;
+    }
+}
+
+@media (max-width: 992px) {
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .payment-section {
+        width: 90%;
+        margin-left: 0;
+    }
+
+    .collapsible-payment,
+    .collapsible-payment-upi {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 50%;
+    }
+
+    .payment-method {
+        align-items: flex-start;
+    }
+
+    .payment-method img {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 10px;
+    }
+
+    .payment-method span {
+        font-size: 1.2rem;
+    }
+
+    .upi-id-btn,
+    .proceed-btn {
+        width: 100%;
+        margin-top: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .modal-content {
+        width: 80%;
+    }
+
+    .payment-section {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .collapsible-label {
+        padding: 0.5rem 1rem;
+    }
+
+    .form-group input {
+        padding: 8px;
+    }
+
+    .proceed-btn {
+        padding: 0.5rem 1rem;
+    }
+}
+    </style>
+    <main class="main-content">
+        <section class="payment-section">
+          <div style="display: grid; grid-template-columns: 1fr;">
+            <div style="text-align: right;">
+              <button id="close" onclick="moveNext()"><img src="../Images/close.png" alt="" height="20px" ></button>
+            </div>
+          </div>
+         
+          <h2>Payment</h2>
+          <p class="payable-amount">Payable Amount: <span id="price-payment"></span>.00</p>
+          <div class="payment-options">
+            <div class="collapsible-payment">
+              <input type="checkbox" id="upi" class="upi" checked />
+              <label for="upi" class="collapsible-label">UPI</label>
+              
+              <div class="collapsible-content">
+                <label class="payment-method">
+                  <input type="radio" name="upi-method" />
+                  <span style="padding-right: 300px;">Reliance Pay</span>
+                  <img src="../Images/money.png" alt="Reliance Pay Icon" />
+                </label>
+          
+                <label class="payment-method">
+                  <input type="radio" name="upi-method" />
+                  <span style="padding-right: 310px;">Google Pay</span>
+                  <img src="../Images/google-pay.png" alt="Google Pay Icon" />
+                </label>
+          
+                <label class="payment-method">
+                  <input type="radio" name="upi-method" />
+                  <span style="padding-right: 330px;">PhonePe</span>
+                  <img src="../Images/phonepe.svg" alt="PhonePe Icon" />
+                </label>
+          
+                <div class="collapsible-payment-upi">
+                  <input type="checkbox" id="upiid" />
+                  <label for="upiid" class="collapsible-label">Pay via UPI ID</label>
+                  <div class="collapsible-content-upi" style="background-color: #bff0f0;">
+                    <label class="form-group">
+                      <input type="text" placeholder="UPI ID" id="upiID" >
+                      <span style="color: red; font-size: small;" id="upi-error"></span>
+                    </label>
+                  <div>
+                </div>
+            </div>
+          </div>
+          <button onclick = "waitPlease('upi')" class="proceed-btn" id="paymentbutton" disabled>Proceed to Payment</button>
+          </div>
+          </div>
+          </div>
+    
+          <div class="payment-options" >
+            <div class="collapsible-payment">
+              <input type="checkbox" id="card" class="upi"/>
+              <label for="card" class="collapsible-label">Credit/Debit Card</label>
+              
+              <div class="collapsible-content" style="background-color: #bff0f0;">
+                <div class="form-group">
+                  <label>Card Number</label>
+                  <input type="text" placeholder="Enter card number" id="card-number">
+                  <span style="color: red; font-size: small;" id="cardnumber-error"></span>
+                </div>
+          
+                <div class="form-group">
+                  <label>Expiry Date</label>
+                  <input type="month" id="expiry-date">
+                  <span style="color: red; font-size: small;" id="expiryDate-error"></span>
+                </div>
+          
+                <div class="form-group">
+                  <label>CVV</label>
+                  <input type="password" placeholder="CVV" id="cvv-id">
+                  <span style="color: red; font-size: small;" id="cvv-error"></span>
+                </div>
+          
+                <div class="form-group">
+                  <label>Name on the Card</label>
+                  <input type="text" placeholder="Cardholder Name" id="name-on-the-card">
+                  <span style="color: red; font-size: small;" id="name-error"></span>
+                </div>
+    
+                <button onclick = "waitPlease('credit_debit_card')" class="proceed-btn" id="paymentsbutton" disabled>Proceed to Payment</button>
+    
+            </div>
+          </div>
+          </div>
+        </section>
+      </main>
+
+      <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closePaymentModal()">&times;</span>
+            <h2>Payment Successful</h2>
+            <p>Your transaction has been completed successfully.</p>
+            <button onclick="closePaymentModal()">OK</button>
+        </div>
+      </div>
+
+      <div id="paymentprocessModal" class="modal">
+        <div class="modal-content">
+            <h2>Payment is processing . . .</h2>
+            <img src="../Images/money.gif" alt="" height = "120px">             
+        </div>
+      </div>
+</div>
+  
+</body>
+
+<script>
+
+document.getElementById("paymentsbutton").style.opacity = '50%';
+      document.getElementById("paymentsbutton").style.cursor = 'no-drop';
+      document.getElementById("paymentbutton").style.opacity = '50%';
+      document.getElementById("paymentbutton").style.cursor = 'no-drop';
+
+
+function processPayment() {
+    document.getElementById("paymentprocessModal").style.display = "block";
+
+}
+
+
+async function moveNext() {
+    let phonenumber = localStorage.getItem("phonenumber");
+    let planId = localStorage.getItem("id");
+    const params = new URLSearchParams(window.location.search);
+
+    var pageStatus = params.get('target') === '5g';
+
+    try {
+        // Fetch user and plan details
+        let userDetailsResponse = await fetch(`http://localhost:8080/api/subscribers/phone/${phonenumber}`);
+        let planDetailsResponse = await fetch(`http://localhost:8080/api/plans/${planId}`);
+
+        if (!userDetailsResponse.ok || !planDetailsResponse.ok) {
+            throw new Error("Failed to fetch user or plan details.");
+        }
+
+        let userDetails = await userDetailsResponse.json();
+        let planDetails = await planDetailsResponse.json();
+
+        // Construct transaction data
+        const transactionData = {
+            user: { userId: userDetails.userId }, // Reference to User entity
+            plan: { planId: Number(planId) }, // Reference to Plan entity
+            transactionMode:"empty", // Set based on user choice
+            transactionStatus: "failure" // Default status
+        };
+
+        // Post transaction data
+        let transactionResponse = await fetch("http://localhost:8080/api/transactions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(transactionData)
+        });
+
+        if (!transactionResponse.ok) {
+            throw new Error("Failed to add transaction");
+        }
+
+
+        window.location.href = pageStatus ? "fivegplans.html?status=true" : "page2.html?status=true";
+
+    } catch (error) {
+        console.error("Error during transaction processing:", error);
+        alert("Failed to process transaction. Please try again.");
+    }
+}
+
+
+
+document.getElementById("price-payment").textContent = localStorage.getItem('price')
+
+
+
+function openPaymentModal() {
+  document.getElementById("paymentprocessModal").style.display = "none";
+
+    document.getElementById("paymentModal").style.display = "flex";
+}
+
+let planDetails
+let userDetails;
+let transactionResult;
+async function closePaymentModal() {
+
+  
+  try {
+        let userPlan = {
+            user: { userId: userDetails.userId },
+            plan: { planId: planDetails.planId },
+            transaction: { transactionId: transactionResult.transactionId },
+            dataUsage: 0,
+        };
+
+        let response = await fetch("http://localhost:8080/api/currentPlan/saveOrUpdate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userPlan)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Plan update error:", errorText);
+            throw new Error("Failed to update user current plan details");
+        }
+
+        let result = await response.json();
+    } catch (error) {
+        console.error("Error:", error);
+    }
+        
+
+
+  const params = new URLSearchParams(window.location.search);
+
+var pageStatus = params.get('target') === '5g'; 
+window.location.href = pageStatus ? "fivegplans.html?status=true":"page2.html?status=true";
+}
+
+const Pcheckboxes = document.querySelectorAll(".upi");
+
+Pcheckboxes.forEach((checkbox) => {
+  checkbox.addEventListener("change", function () {
+    Pcheckboxes.forEach((cb) => {
+      if (cb !== this) cb.checked = false;
+    });
+  });
+});
+
+const upiId = document.getElementById("upiID");
+
+upiId.addEventListener('input', () => {
+    const upiPattern = /^[a-zA-Z0-9._]+@[a-zA-Z]+$/;
+    const errorMessage = document.getElementById("upi-error");
+
+    if (!upiPattern.test(upiId.value)) {
+        errorMessage.textContent = "Invalid UPI ID format (e.g., example@upi)";
+        upiId.style.border = "2px solid red";
+        document.getElementById("paymentbutton").disabled = true;
+        document.getElementById("paymentbutton").style.opacity = '50%';
+        document.getElementById("paymentbutton").style.cursor = 'no-drop';
+    } else {
+        errorMessage.textContent = "";
+        upiId.style.border = "2px solid green";
+        document.getElementById("paymentbutton").disabled = false;
+        document.getElementById("paymentbutton").style.opacity = '100%';
+      document.getElementById("paymentbutton").style.cursor = 'pointer';
+    }
+      
+
+
+    
+});
+    const upiIdradio = document.querySelectorAll(".payment-method input");
+     upiIdradio.forEach(radio => {
+      radio.addEventListener('change' , ()=>{
+              document.getElementById("upiID").value="";
+              document.getElementById("upiID").style.border = 'none';
+              document.getElementById("upi-error").textContent = "";
+              document.getElementById("upiid").checked = true;
+
+     });
+    });
+
+  const cardnumber = document.getElementById("card-number");
+  const expiryDate = document.getElementById("expiry-date");
+  const cvv = document.getElementById("cvv-id");
+  const username = document.getElementById("name-on-the-card");
+
+  var b1status = false;
+  var b2status = false;
+  var b3status = false;
+  var b4status = false;
+  cardnumber.addEventListener('input' , ()=>{
+    const cardNumberPattern = /^\d{16}$/; 
+    if (!cardNumberPattern.test(cardnumber.value)) {
+      document.getElementById("cardnumber-error").textContent =  "Card number must be exactly 16 digits.\n";
+      b1status=false;
+    }
+    else{
+      document.getElementById("cardnumber-error").textContent =  "";
+      b1status=true;
+    }
+    if(b1status && b2status && b3status && b4status){
+      document.getElementById("paymentsbutton").disabled = false;
+      document.getElementById("paymentsbutton").style.opacity = '100%';
+      document.getElementById("paymentsbutton").style.cursor = 'pointer';
+
+    }
+    else{
+      document.getElementById("paymentsbutton").disabled = true;
+      document.getElementById("paymentsbutton").style.opacity = '50%';
+      document.getElementById("paymentsbutton").style.cursor = 'no-drop';
+
+    }
+    
+
+  });
+
+
+  expiryDate.addEventListener('input' , ()=>{
+
+    console.log(document.getElementById("expiry-date").value);
+    const [year,month] = expiryDate.value.split('-');
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear() % 10000;
+        const currentMonth = currentDate.getMonth() + 1;
+        if (parseInt(year) < currentYear || (parseInt(year) === currentYear && parseInt(month) < currentMonth)) {
+          document.getElementById("expiryDate-error").textContent = "Expiry date cannot be in the past.\n";
+          b2status=false;
+
+        }
+        else{
+          document.getElementById("expiryDate-error").textContent = "";
+          b2status=true;
+
+        }
+        if(b1status && b2status && b3status && b4status){
+      document.getElementById("paymentsbutton").disabled = false;
+      document.getElementById("paymentsbutton").style.opacity = '100%';
+      document.getElementById("paymentsbutton").style.cursor = 'pointer';
+
+    }
+    else{
+      document.getElementById("paymentsbutton").disabled = true;
+      document.getElementById("paymentsbutton").style.opacity = '50%';
+      document.getElementById("paymentsbutton").style.cursor = 'no-drop';
+
+    }
+  
+  });
+ 
+
+  cvv.addEventListener('input' , ()=>{
+    const cvvPattern = /^\d{3}$/; 
+    if (!cvvPattern.test(cvv.value)) {
+      document.getElementById("cvv-error").textContent =  "CVV must be exactly 3 digits.";
+      b3status=false;
+
+    }
+    else{
+      document.getElementById("cvv-error").textContent =  "";
+      b3status=true;
+
+    }
+    if(b1status && b2status && b3status && b4status){
+      document.getElementById("paymentsbutton").disabled = false;
+      document.getElementById("paymentsbutton").style.opacity = '100%';
+      document.getElementById("paymentsbutton").style.cursor = 'pointer';
+
+    }
+    else{
+      document.getElementById("paymentsbutton").disabled = true;
+      document.getElementById("paymentsbutton").style.opacity = '50%';
+      document.getElementById("paymentsbutton").style.cursor = 'no-drop';
+
+    }
+
+  });
+
+  username.addEventListener('input' , ()=>{
+    const namePattern = /^[a-zA-Z\s]+$/;
+    if ((!namePattern.test(username.value)) || username.value.trim() === "") {
+      document.getElementById("name-error").textContent =  "Name on the card must only contain letters and spaces";
+      b4status=false;
+
+    }
+    else{
+      document.getElementById("name-error").textContent =  "";   
+      b4status=true;
+
+    }
+
+    if(b1status && b2status && b3status && b4status){
+      document.getElementById("paymentsbutton").disabled = false;
+      document.getElementById("paymentsbutton").style.opacity = '100%';
+      document.getElementById("paymentsbutton").style.cursor = 'pointer';
+
+    }
+    else{
+      document.getElementById("paymentsbutton").disabled = true;
+      document.getElementById("paymentsbutton").style.opacity = '50%';
+      document.getElementById("paymentsbutton").style.cursor = 'no-drop';
+
+    }
+  });
+
+ 
+  async function waitPlease(paymentway) {
+
+processPayment();
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 6000));
+
+        openPaymentModal();
+
+        const phonenumber = localStorage.getItem("phonenumber");
+        let planId = localStorage.getItem("id");
+        const is5GPage = new URLSearchParams(window.location.search).get('target') === '5g';
+
+        // Convert planId properly
+        let planID = Number(planId);
+
+        if (!phonenumber || !planId || isNaN(planID)) {
+            console.error("Invalid values:", { phonenumber, planId, planID });
+            throw new Error("Missing or invalid phone number/plan ID");
+        }
+
+        const [userResponse, planResponse] = await Promise.all([
+            fetch(`http://localhost:8080/api/subscribers/phone/${phonenumber}`),
+            fetch(`http://localhost:8080/api/plans/${planID}`)
+        ]);
+
+        if (!userResponse.ok || !planResponse.ok) {
+            throw new Error("Failed to fetch user or plan details.");
+        }
+
+        userDetails = await userResponse.json();
+        planDetails = await planResponse.json();
+
+        if (!userDetails || !userDetails.userId) {
+            throw new Error("Invalid user details received");
+        }
+
+        const transaction = {
+            user: { userId: userDetails.userId },
+            plan: { planId: planDetails.planId },
+            transactionMode: paymentway,
+            transactionStatus: "success"
+        };
+
+        let transactionResponse = await fetch("http://localhost:8080/api/transactions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(transaction)
+        });
+
+        if (!transactionResponse.ok) {
+            throw new Error("Failed to add transaction");
+        }
+
+        transactionResult = await transactionResponse.json();
+
+       
+
+
+    } catch (error) {
+        console.error("Error during transaction processing:", error);
+        alert("Failed to process transaction: " + error.message);
+    } finally {
+        document.getElementById("paymentprocessModal").style.display = "none";
+    }
+}
+
+
+</script>
+
+</html>

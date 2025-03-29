@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../Images/favicon.jpg"> 
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #006666;
+            --primary-light: #b3f1f0;
+            --primary-dark: #005252;
+            --accent-color: #ff9900;
+            --text-dark: #333333;
+            --text-light: #ffffff;
+            --border-radius: 8px;
+            --box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    overflow: hidden;
+    width: 150px;
+    margin-top: 12px;
+
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+    border-bottom: 1px solid #ddd;
+}
+
+.dropdown-menu a:hover {
+    background: #f1f1f1;
+}
+
+.dropdown-menu a:last-child {
+    border-bottom: none;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+}
+       
+        .header {
+            display: flex;
+            position: fixed;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--primary-color);
+            padding: 0.7rem 2rem;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            height: 40px;
+            margin-right: 1.5rem;
+        }
+        
+        .header-nav ul {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+        }
+        
+        .header-nav li {
+            margin: 0 0.5rem;
+            position: relative;
+        }
+        
+        .header-nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .header-nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-light);
+        }
+        
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            padding-top: 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-light);
+        }
+        
+        .profile-section {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .profile-photo-container {
+            position: relative;
+        }
+        
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+        }
+        
+        .profile-details {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .profile-name {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--primary-dark);
+        }
+        
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .info-item i {
+            color: var(--primary-color);
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+        
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            margin: 5% auto;
+            border-radius: var(--border-radius);
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.3);
+            max-height: 80vh; 
+            overflow-y: auto; 
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .close-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            color: var(--text-dark);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 102, 102, 0.1);
+        }
+        
+        .save-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .save-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        
+        
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 0.5rem 1rem;
+            }
+            
+            .header-nav ul {
+                gap: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .profile-section {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .profile-photo {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .profile-details {
+                text-align: center;
+            }
+            
+            .button-group {
+                justify-content: center;
+            }
+           
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <img src="../Images/logo2-removebg-preview.png" alt="Tech Mahindra Logo" class="logo">
+        </div>
+        <nav class="header-nav">
+            <ul>
+                    <div>
+                        <img style="cursor:pointer; margin-top: 1px;" src="../Images/user.png" onclick="toggleDropdown()" alt="" height="25">
+                        <div id="dropdownMenu" class="dropdown-menu">
+                         <a href="" style="color:black">My Account</a>
+                         <a href="" style="color: black;" onclick="logout(this)">Logout</a>
+                        </div>
+                     </div>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    
+    <div class="dashboard-container">
+
+        <div class="card">
+            <h2 class="section-title">My Profile</h2>
+            <div class="profile-section">
+                <div class="profile-photo-container">
+                    <img src="../Images/bg1.png" alt="Profile Picture" class="profile-photo">
+                </div>
+                <div class="profile-details">
+                    <h2 class="profile-name" id="name"></h2>
+                    <div class="profile-info">
+                        <div>
+                            <div class="info-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>Email: <span id="email"></span></span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-phone"></i>
+                                <span>Phone: <span id="phonenumber"></span></span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-phone-alt"></i>
+                                <span>Alternate Phone: <span id="altphonenumber"></span></span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="info-item">
+                                <i class="fas fa-birthday-cake"></i>
+                                <span>Date of Birth: <span id="dob"></span></span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Address: <span id="address"></span></span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-user-shield"></i>
+                                <span>Account Status:<span id="status"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn" onclick="openModal()">
+                            <i class="fas fa-user-edit"></i> Edit Profile
+                        </button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="profileModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Edit Profile</h2>
+                    <span class="close-btn" onclick="closeModal()">&times;</span>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="modalFname">First Name</label>
+                        <input type="text" id="modalFname" class="input-field">
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="modalLname">Last Name</label>
+                        <input type="text" id="modalLname" class="input-field">
+                    </div>
+                </div>
+        
+                <div class="form-group">
+                    <label for="modalEmail">Email</label>
+                    <input type="email" id="modalEmail" class="input-field">
+                </div>
+        
+                <div class="form-group">
+                    <label for="modalPhone">Phone Number</label>
+                    <input type="tel" id="modalPhone" class="input-field" disabled>
+                </div>
+    
+                <div class="form-group">
+                    <label for="modalPhone">Alternate Phone Number</label>
+                    <input type="tel" id="modalAlternatePhone" class="input-field">
+                </div>
+        
+                <div class="form-group">
+                    <label for="modalDob">Date of Birth</label>
+                    <input type="date" id="modalDob" class="input-field">
+                </div>
+        
+                <div class="form-group">
+                    <label for="modalAddress">Address</label>
+                    <input type="text" id="modalAddress" class="input-field">
+                </div>
+        
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="modalState">State</label>
+                        <input type="text" id="modalState" class="input-field">
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="modalDistrict">District</label>
+                        <input type="text" id="modalDistrict" class="input-field">
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="modalPincode">Pincode</label>
+                        <input type="text" id="modalPincode" class="input-field">
+                    </div>
+                </div>
+                
+                <button class="save-btn" onclick="saveProfileChanges()">Save Changes</button>
+            </div>
+        </div>
+        <script>
+        const phoneNumber = localStorage.getItem("phonenumber");
+        let userid;
+        window.onload = function () {
+            fetchUserDetails();
+        }
+    
+        function toggleDropdown() {
+    
+      var dropdown = document.getElementById("dropdownMenu");
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    
+    }
+    
+        function logout(clicked) {
+        var confirmLogout = confirm("Are you sure you want to log out?");
+        if (confirmLogout) {
+            clicked.href="adminLogin.html";
+        }
+    }
+        
+    
+    async function fetchUserDetails(){
+        if (!phoneNumber) {
+            console.error("phonenumber not found in");
+            return;
+        }
+    
+        await fetch(`http://localhost:8080/api/subscribers/phone/${phoneNumber}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch user details.");
+                }
+                return response.json();
+            })
+            .then(user => {
+                userid=user.userId;
+                document.getElementById("phonenumber").textContent = user.userPhonenumber;
+                document.getElementById("name").textContent = `${user.userFname} ${user.userLname}`;
+                document.getElementById("email").textContent = user.userEmail;
+                document.getElementById("altphonenumber").textContent = user.userAlternatePhonenumber;
+                document.getElementById("dob").textContent = user.userDateOfBirth;
+                document.getElementById("address").textContent = `${user.userAddress} ${user.userDistrict} ${user.userState} ${user.userPincode}`;
+                document.getElementById("status").innerHTML = user.userAccountStatus == "ACTIVE" ?  "<span style='color: green; font-weight: bold;'>Active</span>" :  "<span style='color: orange; font-weight: bold;'>Inactive</span>";
+            }) 
+            .catch(error => {
+                console.error("Error fetching user details:", error);
+            });
+            fetchCurrentPlan(userid);
+    
+            fetchUserTransactions(userid);
+    
+    };
+    
+    // Function to open the modal and fetch user details
+    function openModal() {
+        fetch(`http://localhost:8080/api/subscribers/phone/${phoneNumber}`)
+            .then(response => response.json())
+            .then(user => {
+                document.getElementById("modalFname").value = user.userFname;
+                document.getElementById("modalLname").value = user.userLname;
+                document.getElementById("modalEmail").value = user.userEmail;
+                document.getElementById("modalPhone").value = user.userPhonenumber;
+                document.getElementById("modalAlternatePhone").value =  user.userAlternatePhonenumber;
+                document.getElementById("modalDob").value = user.userDateOfBirth;
+                document.getElementById("modalAddress").value = user.userAddress;
+                document.getElementById("modalState").value = user.userState;
+                document.getElementById("modalDistrict").value = user.userDistrict;
+                document.getElementById("modalPincode").value = user.userPincode;
+    
+                document.getElementById("profileModal").style.display = "block";
+            })
+            .catch(error => console.error("Error fetching user details:", error));
+    }
+    
+    // Function to close the modal
+    function closeModal() {
+        document.getElementById("profileModal").style.display = "none";
+    }
+    
+    // Function to save profile changes
+    function saveProfileChanges() {
+    
+        const updatedUser = {
+            userFname: document.getElementById("modalFname").value,
+            userLname: document.getElementById("modalLname").value,
+            userEmail: document.getElementById("modalEmail").value,
+            userPhonenumber: document.getElementById("modalPhone").value,
+            userAlternatePhonenumber : document.getElementById("modalAlternatePhone").value,
+            userDateOfBirth: document.getElementById("modalDob").value,
+            userAddress: document.getElementById("modalAddress").value,
+            userState: document.getElementById("modalState").value,
+            userDistrict: document.getElementById("modalDistrict").value,
+            userPincode: document.getElementById("modalPincode").value
+        };
+    
+        fetch(`http://localhost:8080/api/subscribers/${userid}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(updatedUser)
+        })
+        .then(response => response.json())
+        .then(data => {
+    
+            Toastify({
+                text: "Profile Updated Successfully",
+                duration: 3000,
+                gravity: "top", // `top`, `bottom`
+                position: "right", // `left`, `center`, `right`
+                backgroundColor: "green",
+            }).showToast();
+    
+            setTimeout(() =>{
+    
+            } , 4000);
+    
+            closeModal('profileModal');
+            fetchUserDetails(); // Refresh the profile display after update
+        })
+        .catch(error => console.error("Error updating profile:", error));
+    }
+    
+      window.onclick = function(event) {
+                if (event.target.className === 'modal') {
+                    event.target.style.display = "none";
+                }
+            };
+    
+        </script>
+    </body>
+    </html>

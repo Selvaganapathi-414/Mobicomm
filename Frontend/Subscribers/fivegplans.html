@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../Images/favicon.jpg"> 
+    <title>FiveGPlans</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            text-align: center;
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #006666;
+            padding: 0.5rem 1rem;
+            width: 100%;
+            position: relative;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 1rem;
+        }
+
+        .header-nav ul {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .header-nav li {
+            margin: 0 1rem;
+        }
+
+        .header-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .header-nav ul li a:hover {
+            background-color: rgb(183, 242, 240);
+            color: #005f5f;
+            padding: 5px 0px;
+            border-radius: 3px;
+        }
+
+        .hamburger-icon {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+            z-index: 1001;
+            margin-left: 200px;
+        }
+
+        .hamburger-icon span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .carousel img {
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .plan-price {
+            color: #007c7c;
+        }
+
+        .plan-card {
+            background-color: #e6f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .ott-platform {
+            background: #f3f4f6;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .ott-platform:hover {
+            background: #31b4ba;
+            transform: translateY(-2px);
+        }
+
+        .buy-btn {
+            background-color: #007c7c;
+            color: #fff;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .buy-btn:hover {
+            background-color: #005f5f;
+        }
+
+        .footer {
+            background-color: #005f5f;
+            color: #fefefe;
+        }
+
+        .true-5g-label {
+            background-color: rgb(11, 76, 85);
+            color: white;
+            font-style: italic;
+            border-radius: 5px;
+            padding: 0.5em 1em;
+            display: inline-block;
+            margin-bottom: 1em;
+        }
+
+        .footer {
+            text-align: center;
+            margin: 1rem;
+            color: #fefefe;
+            background-color: #005f5f;
+            height: 50px;
+        }
+
+        .footer p {
+            padding-top: 20px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .hamburger-icon {
+                display: flex;
+                margin-right: 2px;
+            }
+
+            .header-nav ul {
+                display: none;
+                position: absolute;
+                top: 56px;
+                right: 0;
+                width: 100%;
+                background-color: #006666;
+                flex-direction: column;
+                gap: 0;
+                z-index: 1000;
+            }
+
+            .header-nav.active ul {
+                display: flex;
+            }
+
+            .header-nav li {
+                margin: 0;
+                width: 100%;
+            }
+
+            .header-nav li a {
+                display: block;
+                padding: 15px 25px;
+                width: 100%;
+            }
+
+            .carousel img {
+                height: 300px;
+            }
+        }
+
+        @media screen and (max-width: 576px) {
+            .header {
+                padding: 0.5rem;
+            }
+
+            .carousel img {
+                height: 200px;
+            }
+
+            .plan-card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+
+    <header class="header">
+        <div class="header-left">
+            <img src="../Images/logo2-removebg-preview.png" alt="Tech Mahindra Logo" height="20" class="logo">
+        </div>
+        <div class="hamburger-icon" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav class="header-nav">
+            <ul>
+                <li><a href="page1.html">Home</a></li>
+                <li><a href="" style="text-decoration: underline;">True 5G</a></li>
+                <li><a href="" id="plansid">Plans</a></li>
+                <li><a href="" id="supportid">Support</a></li>
+                <div id="classImage">
+                    <a href="profile.html"><img src="../Images/user.png" alt="" height="25"></a>
+                </div>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="carousel-container container my-4">
+        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="../Images/g51.jpg" class="d-block w-100" alt="Slide 1">
+                </div>
+                <div class="carousel-item">
+                    <img src="../Images/g52.jpg" class="d-block w-100" alt="Slide 2">
+                </div>
+                <div class="carousel-item">
+                    <img src="../Images/g53.jpg" class="d-block w-100" alt="Slide 3">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="container" id="5GUnlimitedPlans" >
+        <section class="content">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="5GUnlimitedPlansgrid">
+                
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p>Copyright © 2010-2025 My Tech. All rights reserved.</p>
+    </footer>
+
+    <script>
+
+document.addEventListener("DOMContentLoaded", async function () {
+    const token = localStorage.getItem("accessToken");
+
+    try {
+        let response = await fetch("http://localhost:8080/api/both/plans/category/5GUnlimitedPlans" ,{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+            }); 
+        let plans = await response.json();
+        let plansContainer = document.getElementById("5GUnlimitedPlansgrid");
+        plansContainer.innerHTML = "";
+
+        plans.forEach(plan => {
+            let ottSection = (plan.planOttOffers)
+                ? `<div class="ott-section mt-3">
+                        <div class="ott-title fw-bold text-start">Included OTT Subscriptions</div>
+                        <div class="ott-plans row row-cols-3 g-2 mt-2">
+                            ${generateOTTIcons(plan.planOttOffers)}
+                        </div>
+                   </div>`
+                : '';
+
+            let planCard = `
+                <div class="col">
+                    <div class="plan-card p-3 text-center">
+                        <div class="true-5g-label">True 5G</div>
+                        <div class="plan-price fs-2 fw-bold">₹${plan.planPrice}</div>
+                        <div class="plan-details">
+                            <p>Validity: <span class="validityId">${plan.planValidityInDays} Days</span></p>
+                            <p><b>${plan.planDataPerDay ? plan.planDataPerDay + ' GB' : 'N/A'}</b> GB/Day</p>
+                            <p>Messages: <b>${plan.planSmsValidity == null ? 0 : plan.planSmsValidity}</b> SMS/Day</p>
+                            <p>Voice: <b>Unlimited</b></p>
+                        </div>
+                        ${ottSection}
+                        <button class="buy-btn btn w-100 mt-3" onclick="payment(${plan.planPrice})">Buy</button>
+                    </div>
+                </div>
+            `;
+
+            plansContainer.innerHTML += planCard;
+        });
+
+    } catch (error) {
+        console.error("Error fetching plans:", error);
+    }
+});
+
+function generateOTTIcons(ottPlans) {
+    if (!ottPlans) return "";
+    let ottMap = {
+        "Netflix": "🎬",
+        "Disney+": "📺",
+        "Prime": "🎥"
+    };
+    return ottPlans.split(",").map(ott => `
+        <div class="col">
+            <div class="ott-platform p-2">
+                <div class="ott-icon">${ottMap[ott.trim()]}</div>
+                <div class="ott-name">${ott.trim()}</div>
+            </div>
+        </div>
+    `).join("");
+}
+
+        
+        var params = new URLSearchParams(window.location.search);
+        var status = params.get("status");
+
+        if (status === "false") {
+            document.getElementById("classImage").style.display = 'none';
+            document.getElementById("plansid").href = "page2.html?status=false";
+            document.getElementById("supportid").href = "support.html?status=false";
+        } else {
+            document.getElementById("plansid").href = "page2.html?status=true";
+            document.getElementById("supportid").href = "support.html?status=true";
+        }
+
+        function payment(val) {
+            
+                    if (status == 'false') {
+                        window.location.href = "page1.html";
+                    } else {
+                        localStorage.setItem('price', val);
+                        startPayment();
+                    }
+                
+           
+        }
+
+        let currentSlide = 0;
+
+const totalSlides = document.querySelectorAll('.carousel-slide').length;
+const carousel = document.querySelector('.carousel');
+
+function moveSlide(direction) {
+  currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+  updateCarousel();
+}
+
+function updateCarousel() {
+  carousel.style.transform = `translateX(-${currentSlide * (100 / totalSlides)}%)`;
+}
+
+updateCarousel();
+
+setInterval(() => {
+  moveSlide(1);
+}, 3000); 
+        // Hamburger menu functionality
+        function toggleMenu() {
+            const headerNav = document.querySelector('.header-nav');
+            headerNav.classList.toggle('active');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function (event) {
+            const headerNav = document.querySelector('.header-nav');
+            const hamburgerIcon = document.querySelector('.hamburger-icon');
+
+            if (!headerNav.contains(event.target) && !hamburgerIcon.contains(event.target) && headerNav.classList.contains('active')) {
+                headerNav.classList.remove('active');
+            }
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('.header-nav a').forEach(link => {
+            link.addEventListener('click', function () {
+                const headerNav = document.querySelector('.header-nav');
+                headerNav.classList.remove('active');
+            });
+        });
+
+let planDetails
+let userDetails;
+let transactionResult; 
+
+async function startPayment() {
+  let token = localStorage.getItem("accessToken");
+
+    try {
+        let response = await fetch(`http://localhost:8080/api/customer/payments/create?amount= ${localStorage.getItem('price')}`, { 
+          method: "POST" ,
+          headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+            
+        });
+        let order = await response.json();
+
+        var options = {
+            "key": "rzp_test_HohQOoI3083uX1",
+            "amount": localStorage.getItem('price') * 100,
+            "currency": "INR",
+            "name": "MobiComm Recharge",
+            "description": "Mobile Recharge Payment",
+            "order_id": order.id, // Order ID from backend
+            "handler": async function (response) {
+                alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
+
+                await waitPlease();
+
+                await saveTransaction();
+            },
+            "prefill": {
+                "name": "User",
+                "email": "user@example.com",
+                "contact": localStorage.getItem("phonenumber")
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+
+        var rzp = new Razorpay(options);
+        rzp.open();
+
+        rzp.on('payment.failed', async function (response) {
+            alert("Payment failed! Reason: " + response.error.description);
+
+            await moveNext();
+        });
+
+    } catch (error) {
+        console.error("Error initiating payment:", error);
+        await moveNext();
+    }
+}
+
+
+async function moveNext() {
+    let phonenumber = localStorage.getItem("phonenumber");
+    let planId = localStorage.getItem("id");
+
+    let token = localStorage.getItem("accessToken");
+
+
+    try {
+        // Fetch user and plan details
+        let userDetailsResponse = await fetch(`http://localhost:8080/api/customer/phone/${phonenumber}`,{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+            });
+        let planDetailsResponse = await fetch(`http://localhost:8080/api/both/plans/${planId}`,{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+            });
+
+        if (!userDetailsResponse.ok || !planDetailsResponse.ok) {
+            throw new Error("Failed to fetch user or plan details.");
+        }
+
+        let userDetails = await userDetailsResponse.json();
+        let planDetails = await planDetailsResponse.json();
+
+        // Construct transaction data
+        const transactionData = {
+            user: { userId: userDetails.userId }, // Reference to User entity
+            plan: { planId: Number(planId) }, // Reference to Plan entity
+            transactionMode:"empty", // Set based on user choice
+            transactionStatus: "failure" // Default status
+        };
+        let token = localStorage.getItem("accessToken");
+
+        // Post transaction data
+        let transactionResponse = await fetch("http://localhost:8080/api/customer/transactions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+
+            },
+            body: JSON.stringify(transactionData)
+        });
+
+        if (!transactionResponse.ok) {
+            throw new Error("Failed to add transaction");
+        }
+
+    } catch (error) {
+        console.error("Error during transaction processing:", error);
+        alert("Failed to process transaction. Please try again.");
+    }
+}
+
+async function saveTransaction() {
+
+  let token = localStorage.getItem("accessToken");
+
+try {
+      let userPlan = {
+          user: { userId: userDetails.userId },
+          plan: { planId: planDetails.planId },
+          transaction: { transactionId: transactionResult.transactionId },
+          dataUsage: 0,
+      };
+
+      let response = await fetch("http://localhost:8080/api/customer/currentPlan/saveOrUpdate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json","Authorization" : `Bearer ${token}`
+        },
+          body: JSON.stringify(userPlan)
+      });
+
+      if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Plan update error:", errorText);
+          throw new Error("Failed to update user current plan details");
+      }
+
+      let result = await response.json();
+  } catch (error) {
+      console.error("Error:", error);
+  }
+}
+
+
+async function waitPlease() {
+
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 6000));
+
+
+        const phonenumber = localStorage.getItem("phonenumber");
+        let planId = localStorage.getItem("id");
+        const is5GPage = new URLSearchParams(window.location.search).get('target') === '5g';
+
+        // Convert planId properly
+        let planID = Number(planId);
+
+        if (!phonenumber || !planId || isNaN(planID)) {
+            console.error("Invalid values:", { phonenumber, planId, planID });
+            throw new Error("Missing or invalid phone number/plan ID");
+        }
+        let token = localStorage.getItem("accessToken");
+
+        const [userResponse, planResponse] = await Promise.all([
+            fetch(`http://localhost:8080/api/customer/phone/${phonenumber}`,{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+            }),
+            fetch(`http://localhost:8080/api/both/plans/${planID}`,{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+            })
+        ]);
+
+        if (!userResponse.ok || !planResponse.ok) {
+            throw new Error("Failed to fetch user or plan details.");
+        }
+
+        userDetails = await userResponse.json();
+        planDetails = await planResponse.json();
+
+        if (!userDetails || !userDetails.userId) {
+            throw new Error("Invalid user details received");
+        }
+
+        const transaction = {
+            user: { userId: userDetails.userId },
+            plan: { planId: planDetails.planId },
+            transactionMode: 'upi',
+            transactionStatus: "success"
+        };
+
+        let transactionResponse = await fetch("http://localhost:8080/api/customer/transactions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" , "Authorization" : `Bearer ${token}`
+          },
+            body: JSON.stringify(transaction)
+        });
+
+        if (!transactionResponse.ok) {
+            throw new Error("Failed to add transaction");
+        }
+
+        transactionResult = await transactionResponse.json();
+
+    } catch (error) {
+        console.error("Error during transaction processing:", error);
+        alert("Failed to process transaction: " + error.message);
+    } finally {
+    }
+}
+    </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

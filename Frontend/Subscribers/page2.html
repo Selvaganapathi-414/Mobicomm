@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../Images/favicon.jpg"> 
+    <title>Recharge</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+
+<style>
+    * {
+    margin: 0;
+    padding: 0px 2px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #006666;
+    position: fixed;
+    padding: 0.5rem 1rem;
+    width: 100%;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 40px;
+    margin-right: 1rem;
+}
+
+.header-nav ul {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+}
+
+.header-nav li {
+    margin: 0.2rem 0.5rem;
+}
+
+.header-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 7px;
+    display: inline-block;
+    border-radius: 3px;
+}
+
+.header-nav ul li a:hover {
+    background-color: rgb(183, 242, 240);
+    color: #005f5f;
+}
+
+.main-container {
+    display: flex;
+    margin-top: 0px;
+    padding-top: 60px;
+}
+
+.sidebar {
+    width: 300px;
+    background-color: #9ecfd0;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-right: 1rem;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.recharge-box {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.recharge-title {
+    font-weight: bold;
+    color: #007c7c;
+}
+
+.recharge-number {
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+}
+
+.change-btn {
+    background-color: #007c7c;
+    color: #fff;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.change-btn:hover {
+    background-color: #005f5f;
+}
+
+.sidebar-menu {
+    list-style: none;
+}
+
+.sidebar-menu li a {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px;
+    display: block;
+    border-radius: 3px;
+}
+
+.sidebar-menu li a.active {
+    background-color: #005f5f;
+    color: #ffffff;
+}
+
+.sidebar-menu li a:hover {
+    background-color: #bff0f0;
+    color: #000000;
+}
+
+.content {
+    flex: 1;
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.section-heading {
+    margin-bottom: 1rem;
+}
+
+.section-heading h2 {
+    font-size: 1.2rem;
+    color: #007c7c;
+}
+
+.section-heading span {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.plan-card {
+    background-color: #bff0f0;
+    border-radius: 6px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.plan-card:hover{
+  transform: translateY(-10px);
+}
+.plan-price {
+    font-size: 1.5rem;
+    color: #007c7c;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.plan-details p {
+    margin: 0.2rem 0;
+    font-size: 0.9rem;
+    padding-bottom: 10px;
+}
+
+.buy-btn {
+    margin-top: 1rem;
+    background-color: #007c7c;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+}
+
+.buy-btn:hover {
+    background-color: #005f5f;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    overflow: hidden;
+    width: 150px;
+    margin-top: 12px;
+
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+    border-bottom: 1px solid #ddd;
+}
+
+.dropdown-menu a:hover {
+    background: #f1f1f1;
+}
+
+.dropdown-menu a:last-child {
+    border-bottom: none;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+}
+.header-nav li{
+  padding-top: 5px;
+}
+
+.ott-section {
+    margin: 20px 0;
+  }
+
+  .ott-title {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 12px;
+    text-align: left;
+    font-weight: bold;
+  }
+
+  .ott-plans {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .ott-platform {
+    padding: 8px;
+    border-radius: 8px;
+    background: #f3f4f6;
+    transition: all 0.2s ease;
+  }
+
+  .ott-platform:hover {
+    background: #31b4ba;
+    transform: translateY(-2px);
+  }
+
+  .ott-icon {
+    width: 24px;
+    height: 24px;
+    margin: 0 auto;
+  }
+
+  .tab-content {
+            padding: 20px;
+        }
+
+  .ott-name {
+    font-size: 12px;
+    color: #4b5563;
+    margin-top: 4px;
+    font-weight: bold;
+  }
+
+.footer {
+    text-align: center;
+    margin: 1rem;
+    color: #fefefe;
+    background-color: #005f5f;
+    height: 50px;
+}
+
+
+.footer p {
+    padding-top: 20px;
+}
+
+        .validityId{
+  font-weight: 600;
+}
+
+.hamburger-icon {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  cursor: pointer;
+
+}
+
+.hamburger-icon span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background-color: white;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+
+}
+
+@media screen and (max-width: 992px) {
+  .plans-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+  
+  .tab-buttons {
+    flex-wrap: wrap;
+  }
+  
+  .tab-buttons button {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+  .sidebar-menu li a.active {
+    background-color: #005f5f;
+    color: #ffffff;
+}
+}
+
+@media screen and (max-width: 768px) {
+  .hamburger-icon {
+    display: flex;
+    position: absolute; 
+    right: 10px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+  }
+  
+  .header {
+    position: relative;
+  }
+  
+  .header-nav ul {
+        display: none; /* Hide the navigation list */
+        position: absolute;
+        top: 100%; /* Position below the header */
+        left: 0;
+        width: 100%;
+        background-color: #006666;
+        flex-direction: column;
+        padding-left:20px;
+      }
+
+  
+  .header-nav.active ul {
+    right: 0;
+    display: flex;
+  }
+  
+  .header-nav li {
+    margin: 0;
+    width: 100%;
+  }
+  
+  .header-nav li a {
+    display: block;
+    /* padding: 15px 25px; */
+    width: 100%;
+  }
+  
+  /* User icon and dropdown positioning */
+  .header-nav div {
+    margin: 15px 5px;
+  }
+  
+  .dropdown-menu {
+    /* position: relative; */
+    width: 100%;
+    margin-top: 10px;
+    margin-left: 0;
+  }
+  
+  /* Layout adjustments */
+  .main-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .plans-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  
+  .tab-buttons button {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .sidebar-menu li a.active {
+    background-color: #005f5f;
+    color: #ffffff;
+}
+}
+
+@media screen and (max-width: 576px) {
+  
+  .plans-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+  }
+  
+  .plan-card {
+    max-width: 100%;
+  }
+  
+  .tab-buttons {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .tab-buttons button {
+    width: 100%;
+  }
+  
+  .header {
+    padding: 0.5rem;
+  }
+  
+  .logo {
+    height: 30px;
+  }
+  
+  .ott-plans {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .sidebar-menu li a.active {
+    background-color: #005f5f;
+    color: #ffffff;
+}
+}
+
+@media screen and (max-width: 400px) {
+  .hamburger-icon {
+    display: flex;
+    margin-right: 20px;
+  }
+  .ott-plans {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+  
+  .ott-platform {
+    padding: 5px;
+  }
+  
+  .ott-name {
+    font-size: 10px;
+  }
+  
+  .plan-price {
+    font-size: 1.2rem;
+  }
+  
+  .plan-details p {
+    font-size: 0.8rem;
+  }
+  
+  .section-heading h2 {
+    font-size: 1rem;
+  }
+
+  .sidebar-menu li a.active {
+    background-color: #005f5f;
+    color: #ffffff;
+}
+}
+
+svg {
+    width: 100% !important;
+    height: auto !important;
+}
+
+</style>
+<body>
+    <header class="header">
+        <div class="header-left">
+          <img src="../Images/logo2-removebg-preview.png" alt="Logo" height="20" class="logo">
+        </div>
+        <div class="hamburger-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        
+        <nav class="header-nav" style="padding-right: 50px; padding-top: 2px;">
+          <ul>
+            <li><a href="page1.html">Home</a></li>
+            <li><a href="" id="5g">True 5G</a></li>
+            <li><a href ="#" style="text-decoration: underline;">Plans</a></li>
+            <li><a href="" id="support">Support</a></li>
+
+            <div>
+             <img style="cursor:pointer; margin-top: 10px;" src="../Images/user.png"  onclick = "toggleDropdown()" alt="" height="25">
+             <div id="dropdownMenu" class="dropdown-menu">
+              <a href="" id="account">My Account</a>
+              <a href="" onclick="logout()">Logout</a>
+             </div>
+          </div>
+        </div>
+          </ul>
+        </nav>
+      </header>
+
+      
+    
+      <div class="main-container">
+    
+        <aside class="sidebar">
+          <div class="recharge-box">
+            <p class="recharge-title">Recharge</p>
+            <p class="recharge-number" id="recharge-number"></p>
+            <button class="change-btn" onclick="changeButton()">Change</button>
+          </div>
+
+          <div style="background-color: #005f5f;"><h3 style="color: white; padding: 5px;">Plan Categories</h3></div>
+          
+          <br>
+          <ul class="sidebar-menu">
+            
+          </ul>
+
+
+        </aside>
+
+        <div style="width:100%" id="plan-container">
+                   
+        </div>
+      </div>
+
+      <footer class="footer">
+        <p>Copyright © 2010-2025 My Tech. All rights reserved.</p>
+      </footer>
+
+</body>
+
+<script>
+
+
+let arr=[]
+
+document.addEventListener("DOMContentLoaded" , renderCategory);
+
+async function renderCategory(){
+
+  let container = document.getElementsByClassName("sidebar-menu")[0];
+  let token = localStorage.getItem("accessToken");
+console.log(token);
+  try{
+    const response = await fetch("http://localhost:8080/api/both/Category/getCategory",{
+            method:"GET",
+            headers : {
+                "Authorization" : `Bearer ${token}`
+            }
+            });
+        if (!response.ok) {
+            throw new Error("Failed to fetch categories");
+        }
+
+        const categories = await response.json();
+
+        container.innerHTML = "";  
+
+        categories.forEach(category => {
+          arr.push(category.categoryName);
+           
+                let sectionHTML = `
+                    <li><a onclick="requestPlans('${category.categoryName}' , this)" style="cursor:pointer;">${category.categoryDisplayName}</a></li>
+                `;
+                container.innerHTML += sectionHTML;
+            
+    
+        });
+        document.querySelector(".sidebar-menu li a").classList.add("active");
+
+
+        container = document.getElementById("plan-container");
+
+        categories.forEach(category => {
+           
+           let sectionHTML = `
+        <section class="content" id="${category.categoryName}">
+          <h2 style="padding-bottom: 25px;">${category.categoryDisplayName}</h2>
+          <div class="plans-grid" id="${category.categoryName}grid">
+            
+          </div>
+        </section>
+           `;
+           container.innerHTML += sectionHTML;
+       
+
+        });
+
+        tabcontent = document.getElementsByClassName("content");
+
+
+        for (i = 1; i < tabcontent.length; i++) {
+       tabcontent[i].style.display = "none";
+   }
+
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+    }
+    loadPlans("RecommendedPlans");
+}
+
+
+async function loadPlans(category) {
+  let token = localStorage.getItem("accessToken");
+
+    const apiUrl = `http://localhost:8080/api/both/plans/category/${category}`; 
+
+    try {
+        const response = await fetch(apiUrl,{
+            method:"GET",
+            headers : {
+                "Authorization" : `Bearer ${token}`
+            }
+            });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const plans = await response.json();
+
+        let container = document.getElementById(`${category}grid`);
+        if (!container) {
+            console.warn(`Container '${category}grid' not found.`);
+            return;
+        }
+        container.innerHTML = ""; 
+
+        plans.forEach(plan => {
+          let planCard= "";
+
+            if (category === "DataPlans") {
+                planCard = `
+                <div class="plan-card">
+                    <div class="plan-price">₹${plan.planPrice}</div>
+                    
+                    <div class="plan-details">
+                        <p>Validity: <span class="validityId">${plan.planValidityInDays} Days</span></p>
+                        <p><b>${plan.planOverallData ? plan.planOverallData + ' GB' : 'N/A'}</b> GB/Day</p>
+                    </div>
+                    <button class="buy-btn" onclick="payment(${plan.planId} , ${plan.planPrice})">Buy</button>
+                </div>
+                `;
+            }
+            else if (category === "TopupPlans") {
+                planCard = `
+                    <div class="plan-card">
+                    <div class="plan-price">₹${plan.planPrice}</div>
+                    
+                    <div class="plan-details">
+                      <p>Validity: <span class="validityId">${plan.planValidityInDays != 0 ?plan.planValidityInDays + "Days":"Unlimited"} </span></p>
+                      <p>Talktime: <span class="validityId">₹${plan.planTalkTime} </span></p>
+                    </div>
+                    <button class="buy-btn" onclick="payment(${plan.planId} , ${plan.planPrice})">Buy</button>
+                </div>
+                `;
+            }
+            else if ( category === "VoiceOnlyPlans") {
+                planCard = `
+                    <div class="plan-card">
+                    <div class="plan-price">₹${plan.planPrice}</div>
+                    
+                    <div class="plan-details">
+                        <p>Validity: <span class="validityId">${plan.planValidityInDays} Days</span></p>
+                        <p>Voice : <b>Unlimited</b></p>
+                        <p>Messages: <b>${plan.planSmsValidity == null ? 0 :plan.planSmsValidity}</b> SMS/Day</p>
+                    </div>
+                    <button class="buy-btn" onclick="payment(${plan.planId} , ${plan.planPrice})">Buy</button>
+                </div>
+                `;
+            }
+            else{
+            let ottSection =((plan.planOttOffers))
+                ? `<div class="ott-section">
+                        <div class="ott-title">Included OTT Subscriptions</div>
+                        <div class="ott-plans">
+                            ${generateOTTIcons(plan.planOttOffers)}
+                        </div>
+                   </div>`
+                : '';
+
+            planCard = `
+                <div class="plan-card">
+                    <div class="plan-price">₹${plan.planPrice}</div>
+                    
+                    <div class="plan-details">
+                        <p>Validity: <span class="validityId">${plan.planValidityInDays} Days</span></p>
+                        <p><b>${plan.planDataPerDay ? plan.planDataPerDay + ' GB' : 'N/A'}</b> GB/Day</p>
+                        <p>Messages: <b>${plan.planSmsValidity == null ? 0 :plan.planSmsValidity}</b> SMS/Day</p>
+                        <p>Voice : <b>Unlimited</b></p>
+                    </div>
+                    ${ottSection}
+                    <button class="buy-btn" onclick="payment(${plan.planId} , ${plan.planPrice})">Buy</button>
+                </div>
+            `;
+              }
+
+            container.innerHTML += planCard;
+        });
+
+    } catch (error) {
+        console.error("Error fetching plans:", error);
+    }
+}
+
+
+function generateOTTIcons(ottPlans) {
+    if (!ottPlans) return "";
+    let ottMap = {
+        "Netflix": "🎬",
+        "Disney+": "📺",
+        "Prime": "🎥"
+    };
+    return ottPlans.split(",").map(ott => `
+        <div class="ott-platform">
+            <div class="ott-icon">${ottMap[ott.trim()]}</div>
+            <div class="ott-name">${ott.trim()}</div>
+        </div>
+    `).join("");
+}
+  
+  
+   document.addEventListener("DOMContentLoaded", function() {
+
+    const params = new URLSearchParams(window.location.search);
+    var pageStatus = params.get('status') === 'true';
+
+    if(pageStatus === false){
+        document.getElementById("5g").href="fivegplans.html?status=false";
+        document.getElementById("support").href="support.html?status=false";
+    }
+    else{
+        document.getElementById("5g").href="fivegplans.html?status=true";
+        document.getElementById("support").href="support.html?status=true";
+    }
+
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburgerIcon = document.querySelector('.hamburger-icon');
+    const headerNav = document.querySelector('.header-nav');
+
+    hamburgerIcon.addEventListener('click', function() {
+      headerNav.classList.toggle('active');
+    });
+  });
+
+
+   
+   function changeButton(){
+        
+        window.location.href = "page1.html"
+    }
+
+   function insertPhoneNumber(){
+
+
+        var phonenumber = mbnum.value;
+        document.getElementById('phone-number').innerHTML = `+91 ${phonenumber.substring(0,3)}*****${phonenumber.substring(8)}`;
+    }
+
+   function requestPlans(category , pointers) {
+
+    document.querySelectorAll(".sidebar-menu li a").forEach(item => {
+        item.classList.remove("active");
+    });
+
+        let data = document.getElementsByClassName("content");
+        for(let i=0;i<data.length;i++){
+            data[i].style.display='none';
+        }
+
+        pointers.classList.add("active");
+
+        document.getElementById(category).style.display =  'block' ;
+        loadPlans(category);
+
+    }
+
+    document.getElementById("recharge-number").textContent = localStorage.getItem("phonenumber");
+    document.getElementById("account").addEventListener("click", function(event) {
+    this.href = "profile.html";
+    });
+
+
+
+
+function toggleDropdown() {
+
+  const params = new URLSearchParams(window.location.search);
+  var pageStatus = params.get('status') === 'true'; 
+
+  if(pageStatus){
+    var dropdown = document.getElementById("dropdownMenu");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+  }
+  else{
+    window.location.href="page1.html";
+  }  
+}
+
+async function logout() {
+    let confirmLogout = confirm("Are you sure you want to log out?");
+    if (!confirmLogout) return;
+
+    let token = localStorage.getItem("accessToken");
+    let rtoken = localStorage.getItem("refreshToken");
+
+    if (!token || !rtoken) {
+        alert("Session expired or user not logged in.");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:8080/auth/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type" : "application/json",
+                "Authorization" : `Bearer ${token}`
+            },
+            body: JSON.stringify({ refreshToken : rtoken })
+        });
+
+        alert(response.status);
+        console.log("Response:", response);
+        console.log("Response Status:", response.status);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Logout failed:", errorText);
+            alert("Logout failed. Try again.");
+            return;
+        }
+
+        
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+
+        // Show toast message
+        Toastify({
+            text: "Logged out Successfully",
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+        }).showToast();
+
+        // Redirect after toast duration
+        setTimeout(() => {
+            console.log("Redirecting to page1.html...");
+            window.location.href = "page1.html";
+        }, 3000);
+    } catch (error) {
+        console.error("Fetch error:", error);
+        alert("Something went wrong: " + error.message);
+    }
+}
+
+
+
+function payment(id , price){
+
+  const params = new URLSearchParams(window.location.search);
+
+  var pageStatus = params.get('status') === 'true'; 
+
+      localStorage.setItem('price' , price);
+      localStorage.setItem('id' , id);
+
+if(pageStatus){
+    startPayment();
+}
+else{
+  window.location.href = "page1.html";
+}
+} 
+
+let planDetails
+let userDetails;
+let transactionResult; 
+
+async function startPayment() {
+  let token = localStorage.getItem("accessToken");
+
+    try {
+        let response = await fetch(`http://localhost:8080/api/customer/payments/create?amount=${localStorage.getItem('price')}`, { 
+          method: "POST" ,
+          headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+            
+        });
+        let order = await response.json();
+
+        var options = {
+            "key": "rzp_test_HohQOoI3083uX1",
+            "amount": localStorage.getItem('price') * 100,
+            "currency": "INR",
+            "name": "MobiComm Recharge",
+            "description": "Mobile Recharge Payment",
+            "order_id": order.id, // Order ID from backend
+            "handler": async function (response) {
+              
+              let details = await getPaymentDetails(response.razorpay_payment_id);
+
+                await waitPlease(details.method == "card" ? "credit_debit_card": "upi");
+
+                await saveTransaction();
+
+                const payload = {
+            razorpay_payment_id: response.razorpay_payment_id,
+            email: localStorage.getItem("email"),
+            name: localStorage.getItem("username"),
+            amount: localStorage.getItem('price')
+        };
+        let token = localStorage.getItem("accessToken");
+        console.log(token);
+
+        await fetch("http://localhost:8080/api/customer/success/sendEmail", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", 
+                      "Authorization" : `Bearer ${token}`
+                     },
+            body: JSON.stringify(payload)
+        });
+            },
+            "prefill": {
+                "name": "User",
+                "email": localStorage.getItem("email"),
+                "contact": localStorage.getItem("phonenumber")
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        };
+
+        var rzp = new Razorpay(options);
+        rzp.open();
+
+        rzp.on('payment.failed', async function (response) {
+            alert("Payment failed! Reason: " + response.error.description);
+
+            await moveNext();
+        });
+
+    } catch (error) {
+        console.error("Error initiating payment:", error);
+        await moveNext();
+    }
+}
+
+async function getPaymentDetails(paymentId) {
+  let token = localStorage.getItem("accessToken");
+
+    const response = await fetch(`http://localhost:8080/api/customer/getPaymentDetails?payment_id=${paymentId}`, {
+      method: "GET" ,
+          headers : {
+                "Authorization" : `Bearer ${token}`
+            }
+    });
+    const data = await response.json();
+    console.log("Payment Method:", data.method);
+    return data;
+}
+
+
+async function moveNext() {
+    let phonenumber = localStorage.getItem("phonenumber");
+    let planId = localStorage.getItem("id");
+
+    let token = localStorage.getItem("accessToken");
+
+
+    try {
+        // Fetch user and plan details
+        let userDetailsResponse = await fetch(`http://localhost:8080/api/customer/phone/${phonenumber}`,{
+            method:"GET",
+            headers : {
+                "Authorization" : `Bearer ${token}`
+            }
+            });
+        let planDetailsResponse = await fetch(`http://localhost:8080/api/both/plans/${planId}`,{
+            method:"GET",
+            headers : {
+                "Authorization" : `Bearer ${token}`
+            }
+            });
+
+        if (!userDetailsResponse.ok || !planDetailsResponse.ok) {
+            throw new Error("Failed to fetch user or plan details.");
+        }
+
+        let userDetails = await userDetailsResponse.json();
+        let planDetails = await planDetailsResponse.json();
+        
+
+        // Construct transaction data
+        const transactionData = {
+            user: { userId: userDetails.userId }, // Reference to User entity
+            plan: { planId: Number(planId) }, // Reference to Plan entity
+            transactionMode:"empty", // Set based on user choice
+            transactionStatus: "failure" // Default status
+        };
+        let token = localStorage.getItem("accessToken");
+
+        // Post transaction data
+        let transactionResponse = await fetch("http://localhost:8080/api/customer/transactions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+
+            },
+            body: JSON.stringify(transactionData)
+        });
+
+        if (!transactionResponse.ok) {
+            throw new Error("Failed to add transaction");
+        }
+
+    } catch (error) {
+        console.error("Error during transaction processing:", error);
+        alert("Failed to process transaction. Please try again.");
+    }
+}
+
+async function saveTransaction() {
+
+  let token = localStorage.getItem("accessToken");
+
+try {
+      let userPlan = {
+          user: { userId: userDetails.userId },
+          plan: { planId: planDetails.planId },
+          transaction: { transactionId: transactionResult.transactionId },
+          dataUsage: 0,
+      };
+
+      let response = await fetch("http://localhost:8080/api/customer/currentPlan/saveOrUpdate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json","Authorization" : `Bearer ${token}`
+        },
+          body: JSON.stringify(userPlan)
+      });
+
+      if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Plan update error:", errorText);
+          throw new Error("Failed to update user current plan details");
+      }
+
+      let result = await response.json();
+  } catch (error) {
+      console.error("Error:", error);
+  }
+}
+
+
+async function waitPlease(paymentway) {
+
+
+    try {
+        await new Promise(resolve => setTimeout(resolve, 6000));
+
+
+        const phonenumber = localStorage.getItem("phonenumber");
+        let planId = localStorage.getItem("id");
+        const is5GPage = new URLSearchParams(window.location.search).get('target') === '5g';
+
+        // Convert planId properly
+        let planID = Number(planId);
+
+        if (!phonenumber || !planId || isNaN(planID)) {
+            console.error("Invalid values:", { phonenumber, planId, planID });
+            throw new Error("Missing or invalid phone number/plan ID");
+        }
+        let token = localStorage.getItem("accessToken");
+
+        const [userResponse, planResponse] = await Promise.all([
+            fetch(`http://localhost:8080/api/customer/phone/${phonenumber}`,{
+            method:"GET",
+            headers : {
+                "Authorization" : `Bearer ${token}`
+            }
+            }),
+            fetch(`http://localhost:8080/api/both/plans/${planID}`,{
+            method:"GET",
+            headers : {
+                "Authorization" : `Bearer ${token}`
+            }
+            })
+        ]);
+
+        if (!userResponse.ok || !planResponse.ok) {
+            throw new Error("Failed to fetch user or plan details.");
+        }
+
+        userDetails = await userResponse.json();
+        planDetails = await planResponse.json();
+
+        localStorage.setItem("email" , userDetails.userEmail);
+        localStorage.setItem("username" , userDetails.userFname+ " " +userDetails.userLname);
+
+        if (!userDetails || !userDetails.userId) {
+            throw new Error("Invalid user details received");
+        }
+
+        const transaction = {
+            user: { userId: userDetails.userId },
+            plan: { planId: planDetails.planId },
+            transactionMode: paymentway,
+            transactionStatus: "success"
+        };
+
+        let transactionResponse = await fetch("http://localhost:8080/api/customer/transactions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" , "Authorization" : `Bearer ${token}`
+          },
+            body: JSON.stringify(transaction)
+        });
+
+        if (!transactionResponse.ok) {
+            throw new Error("Failed to add transaction");
+        }
+
+        transactionResult = await transactionResponse.json();
+
+    } catch (error) {
+      
+        console.error("Error during transaction processing:", error);
+        alert("Failed to process transaction: " + error.message);
+    } finally {
+    }
+}
+</script>
+</html>

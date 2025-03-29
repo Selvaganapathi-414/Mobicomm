@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../Images/favicon.jpg"> 
+    <title>AdminLogin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+</head>
+<style>
+      
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+    
+      header{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #006666;
+        height: 50px;
+    }
+    header img{
+        padding-top: 10px;
+    }
+    main{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 60vh;
+        width: 100vw; 
+        background-color: #a6e4e4;
+    }
+    
+    .login-container h2{
+      text-align: center;
+    }
+    
+    .login-container {
+        background-color: rgb(255, 255, 255);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        width: 500px;
+        text-align: left;
+    }
+    
+     input {
+        width: 98%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #0e8e83;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    
+    button:hover {
+        background-color: #065e58;
+    }
+    
+    .error {
+        color: red;
+        font-size: 12px;
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    #loginMessage {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+    .footer {
+    text-align: center;
+    margin: 1rem;
+    color: #fefefe;
+    background-color: #005f5f;
+    height: 50px;
+  }
+  
+  .footer p {
+    padding-top: 20px;
+  }
+        </style>
+<body>
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: #005f5f; border-bottom: 2px solid #ddd;">
+    <div>
+        <img src="../Images/logo2-removebg-preview.png" alt="MobiComm Logo" height="40px">
+    </div>
+
+</header>
+<main>
+
+        <div class="login-container">
+            <h2>Login</h2>
+            <br>
+            
+            <label>Username</label>
+            <input type="text" id="username" placeholder="Enter username">
+            <span class="error" id="usernameError"></span>
+    
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Enter password">
+            <span class="error" id="passwordError"></span>
+    
+            <button onclick="validateLogin()">Login</button>
+            
+            <p id="loginMessage"></p>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+        <p>Copyright © 2010-2025 My Tech. All rights reserved.</p>
+      </footer>
+</body>
+
+<Script>
+    
+    async function validateLogin() {
+    let username = document.getElementById("username").value.trim();
+    let password = document.getElementById("password").value.trim();
+    let usernameError = document.getElementById("usernameError");
+    let passwordError = document.getElementById("passwordError");
+    let loginMessage = document.getElementById("loginMessage");
+
+    usernameError.textContent = "";
+    passwordError.textContent = "";
+    loginMessage.textContent = "";
+
+    let isValid = true;
+
+    if (username === "") {
+        usernameError.style.color = "red";
+        usernameError.textContent = "Username is required.";
+        isValid = false;
+    }
+
+    if(password === ""){
+        passwordError.style.color = "red";
+        passwordError.textContent = "Password is required.";
+        isValid = false;
+    }
+
+    if (!isValid) {
+        loginMessage.style.color = "red";
+        loginMessage.textContent = "Invalid Data";
+        return; 
+    }
+
+   let credentials = {
+     username : username,
+     password : password
+   }
+        try {
+        const response = await fetch("http://localhost:8080/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(credentials)
+        });
+
+        if (!response.ok) {
+            throw new Error("Login failed. Please check your credentials.");
+        }
+        
+
+        const data = await response.json();
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("refreshToken", data.refreshToken);
+
+        loginMessage.style.color = "green";
+            // loginMessage.textContent = "Login successful!";
+            
+            Toastify({
+            text: "logged in successfully!",
+            duration: 3000,
+            gravity: "top", // `top`, `bottom`
+            position: "right", // `left`, `center`, `right`
+            backgroundColor: "green",
+        }).showToast();
+
+            setTimeout(() => {
+                window.location.href = "MobicommAdmin.html";
+            }, 4000);
+        } 
+    
+    catch (error) {
+        console.error("Error during login:", error);
+    }
+    
+}
+
+</Script>
+</html>

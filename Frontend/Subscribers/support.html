@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../Images/favicon.jpg"> 
+    <title>Support</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            text-align: center;
+            background-color: #bdeff7;
+            color: #333;
+        }
+
+        .header {
+            display: flex;
+            position: fixed;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #006666;
+            padding: 0.5rem 1rem;
+            width: 100%;
+            margin-top: -90px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 1rem;
+        }
+
+        .header-nav ul {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .header-nav li {
+            margin: 0 1rem;
+            padding-top: 7px;
+        }
+
+        .header-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .header-nav ul li a:hover {
+            background-color: rgb(183, 242, 240);
+            color: #005f5f;
+            padding: 5px 0px;
+            border-radius: 3px;
+        }
+
+        .faq-container {
+            background-color: #ffffff;
+            max-width: 800px;
+            margin: 90px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-container h2 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #ddd;
+            padding: 15px 0;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            text-align: left;
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            cursor: pointer;
+        }
+
+        .faq-question:hover {
+            color: #127a69;
+        }
+
+        .faq-answer {
+            display: none;
+            text-align: left;
+            margin-top: 10px;
+            font-size: 16px;
+            color: #555;
+            padding-left: 20px;
+            padding-top: 5px;
+            line-height: 1.5;
+            background-color: #b6eaea;
+        }
+
+        .faq-answer.show {
+            display: block;
+        }
+
+        .faq-container p {
+            font-size: 14px;
+            color: #aaa;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #067171;
+            padding: 20px;
+            border-radius: 5px;
+            border-style: none;
+            font-size: 18px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #005f5f;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            width: 500px;
+            margin: 15% auto;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .modal-content p {
+            padding: 30px;
+        }
+
+        .close-btn {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .footer {
+            text-align: center;
+            margin: 1rem;
+            color: #fefefe;
+            background-color: #005f5f;
+            height: 50px;
+            width: 100%;
+        }
+
+        .footer p {
+            padding-top: 20px;
+        }
+
+        /* Hamburger Menu Styles */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            border-radius: 20px;
+            padding: 10px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: #fff;
+            margin: 4px 0;
+            transition: 0.4s;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+                margin-right: 20px;
+            }
+
+            .header-nav ul {
+                display: none;
+                flex-direction: column;
+                background-color: #006666;
+                position: absolute;
+                top: 60px;
+                right: 0;
+                width: 100%;
+                padding: 10px 0;
+            }
+
+            .header-nav ul.active {
+                display: flex;
+            }
+
+            .header-nav li {
+                margin: 0;
+                padding: 10px;
+                text-align: center;
+            }
+
+            .header-nav a {
+                color: #fff;
+                text-decoration: none;
+                font-weight: bold;
+            }
+
+            .header-nav ul li a:hover {
+                background-color: rgb(183, 242, 240);
+                color: #005f5f;
+                padding: 5px 0px;
+                border-radius: 3px;
+            }
+
+            .faq-container {
+                margin: 120px auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header{
+                margin-top: -140px;
+            }
+            .faq-container {
+                margin: 140px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <img src="/Images/logo2-removebg-preview.png" alt="Logo" height="20" class="logo">
+        </div>
+        <nav class="header-nav">
+            <ul>
+                <li><a href="page1.html">Home</a></li>
+                <li><a href="" id="true5G">True 5G</a></li>
+                <li><a href="" id="plans">Plans</a></li>
+                <li><a href="" style="text-decoration: underline;">Support</a></li>
+                <div id="classImage">
+                    <a href="profile.html"><img src="../Images/user.png" alt="" height="25"></a>
+                </div>
+            </ul>
+        </nav>
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <div class="faq-container">
+        <h2>Frequently Asked Questions (FAQ)</h2><br><br>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(0)">
+                How can I recharge my prepaid mobile online?            
+            </div>
+            <div class="faq-answer" id="answer0">
+                You can recharge your prepaid mobile by visiting a recharge website or using a mobile app. Simply enter your mobile number, select your operator, choose a plan, and proceed with payment.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(1)">
+                What payment methods are accepted for prepaid recharges?            
+            </div>
+            <div class="faq-answer" id="answer1">
+                Most platforms accept credit/debit cards, UPI, net banking, wallets, and sometimes even cash on delivery in select cases.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(2)">
+                How do I check my prepaid balance and validity?
+            </div>
+            <div class="faq-answer" id="answer2">
+                You can check your balance and validity by dialing USSD codes provided by your operator or using the telecom provider’s official app.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(3)">
+                What should I do if my recharge fails but the amount is deducted?
+            </div>
+            <div class="faq-answer" id="answer3">
+                If your recharge fails but money is deducted, the amount is usually refunded within 2-3 working days. If not, contact customer support with your transaction ID.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(4)">
+                Can I recharge for someone else?
+            </div>
+            <div class="faq-answer" id="answer4">
+                Yes, you can recharge for any number by entering their mobile number and choosing the appropriate plan.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(5)">
+                Are there any offers or cashback available on prepaid recharges?
+            </div>
+            <div class="faq-answer" id="answer5">
+                Yes, many platforms offer cashback, discounts, and promo codes on prepaid recharges. Check the offers section of the recharge platform.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(6)">
+                Can I recharge my prepaid number in advance?
+            </div>
+            <div class="faq-answer" id="answer6">
+                Yes, most operators allow queueing of recharges, meaning your next plan will be activated once the current plan expires.
+            </div>
+        </div>
+    </div>
+
+    <button id="openModalBtn">Call us @ +91 9089877887</button>
+
+    <div id="simpleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Thank you for reaching out to us!</h2>
+            <p>Our team will call you shortly</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Copyright © 2010-2025 My Tech. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const params = new URLSearchParams(window.location.search);
+            var pageStatus = params.get('status') === 'true';
+
+            if(pageStatus === false){
+                document.getElementById("classImage").style.display='none';
+                document.getElementById("true5G").href="fivegplans.html?status=false";
+                document.getElementById("plans").href="page2.html?status=false";
+            }
+            else{
+                document.getElementById("true5G").href="fivegplans.html?status=true";
+                document.getElementById("plans").href="page2.html?status=true";
+            }
+        });
+
+        function toggleAnswer(index) {
+            const answer = document.getElementById("answer" + index);
+            const answerBlocks = document.getElementsByClassName("faq-answer");
+
+            for (let i = 0; i < answerBlocks.length; i++) {
+                if (answerBlocks[i] === answer && answer.style.display === "none") {
+                    answer.style.display = "block"; 
+                } else {
+                    answerBlocks[i].style.display = "none";
+                }
+            }
+        }
+
+        const modal = document.getElementById("simpleModal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModalBtn = document.querySelector(".close-btn");
+
+        openModalBtn.onclick = () => {
+            const params = new URLSearchParams(window.location.search);
+            var pageStatus = params.get('status') === 'true';
+
+            if(pageStatus){
+                modal.style.display = "block";
+            }
+            else{
+                window.location.href = "page1.html"
+            }
+        };
+
+        closeModalBtn.onclick = () => {
+            modal.style.display = "none";
+        };
+
+        function toggleMenu() {
+            const navUl = document.querySelector('.header-nav ul');
+            navUl.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

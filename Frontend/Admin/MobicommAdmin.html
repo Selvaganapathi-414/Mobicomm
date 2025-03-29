@@ -1,0 +1,2248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../Images/favicon.jpg"> 
+    <title>Admin</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="MobiCommAdminStyles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+
+<body>
+
+    <header
+        style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: #005f5f; border-bottom: 2px solid #ddd;">
+        <div>
+            <img src="../Images/logo2-removebg-preview.png" alt="MobiComm Logo" height="40px">
+        </div>
+
+        <div style="display: flex; align-items: center;">
+            <img src="../Images/user.png" alt="User Icon" height="35px" style="padding-right: 20px;">
+        </div>
+    </header>
+
+    <div class="main-container">
+
+        <aside class="sidebar">
+            <h2>Admin</h2>
+            <ul class="sidebar-menu"> 
+                <li><a href="#" onclick="changeContent(5)">Dashboard</a></li>
+                <li><a href="#" onclick="changeContent(1)">User Management</a></li>
+                <li><a href="#" onclick="changeContent(2)">Transaction Management</a></li>
+                <li><a href="#" onclick="changeContent(3)">Recharge plan Management</a></li>
+                <li><a href="#" onclick="changeContent(4)">Settings</a></li>
+            </ul>
+        </aside>
+
+        <div class="main-content">
+
+            <div id="expiry-users" class="section active">
+                <div class="stats-container">
+                    <div class="card allcard">
+                        <h3>Total Transactions</h3>
+                        <p id="totalTransactions"></p>
+                    </div>
+                    <div class="card successcard">
+                        <h3>Successful Transactions</h3>
+                        <p id="successTransactions"></p>
+                    </div>
+                    <div class="card failedcard">
+                        <h3>Failed Transactions</h3>
+                        <p id="failedTransactions">120</p>
+                    </div>
+                    <div class="card totalcard">
+                        <h3>Total Revenue</h3>
+                        <p id="totalRevenue"></p>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Transaction Overview</div>
+                            <select id="periodSelect" class="btn btn-outline">
+                                <option value="monthly">Monthly</option>
+                                <option value="today">Today</option>
+                                <option value="quarterly">Quarterly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
+                        </div>
+                        <div> <canvas id="transactionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Payment Methods</div>
+                        </div>
+                        <canvas id="paymentChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="table-section">
+                    <div class="table-header">
+                        <h2>User's Plans Expiring in Three Days</h2>
+                        <div class="search-bar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="text" placeholder="Search users..." id="searchInput">
+                        </div>
+                        <div>
+                            <button id="download-btn" onclick="downloadTableAsCSV()">Download</button>
+                        </div>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table id="user-table-expiry">
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone Number</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="user-management" class="section">
+                <h3>User Management</h3><br>
+                <button class="edit-btn" onclick="openAdduserModal()">Add New User</button>
+                <table id="user-table">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                            <th>Alternate Phone Number</th>
+                            <th>Date Of Birth</th>
+                            <th>Address</th>
+                            <th>status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            
+                
+
+
+                <div id="usereditModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="closeedituserModal()">&times;</span>
+                        <h2>Edit User</h2>
+                
+                        <label>User ID</label>
+                        <input type="text" id="modalUserId" disabled>
+                
+                        <label>First Name</label>
+                        <input type="text" id="modalFname" oninput="validateInput('modalFname', 'fnameError')">
+                        <span class="error" id="fnameError"></span>
+                
+                        <label>Last Name</label>
+                        <input type="text" id="modalLname" oninput="validateInput('modalLname', 'lnameError')">
+                        <span class="error" id="lnameError"></span>
+                
+                        <label>Email</label>
+                        <input type="email" id="modalEmail" oninput="validateInput('modalEmail', 'emailError')">
+                        <span class="error" id="emailError"></span>
+                
+                        <label>Phone Number</label>
+                        <input type="tel" id="modalPhone" disabled>
+                        <span class="error" id="phoneError"></span>
+                
+                        <label>Alternate Phone Number</label>
+                        <input type="tel" id="modalAltPhone" oninput="validateInput('modalAltPhone', 'altPhoneError')">
+                        <span class="error" id="altPhoneError"></span>
+                
+                        <label>Date Of Birth</label>
+                        <input type="date" id="modaldob" oninput="validateInput('modaldob', 'dobError')">
+                        <span class="error" id="dobError"></span>
+                
+                        <label>Address</label>
+                        <input type="text" id="modalAddress" oninput="validateInput('modalAddress', 'addressError')">
+                        <span class="error" id="addressError"></span>
+                
+                        <label>District</label>
+                        <input type="text" id="modalDistrict" oninput="validateInput('modalDistrict', 'districtError')">
+                        <span class="error" id="districtError"></span>
+                
+                        <label>State</label>
+                        <input type="text" id="modalState" oninput="validateInput('modalState', 'stateError')">
+                        <span class="error" id="stateError"></span>
+                
+                        <label>Pincode</label>
+                        <input type="text" id="modalPincode" oninput="validateInput('modalPincode', 'pincodeError')">
+                        <span class="error" id="pincodeError"></span>
+                
+                        <button class="save-btn" onclick="saveedituserChanges()">Save</button>
+                    </div>
+                </div>
+                
+
+                <div id="useraddModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="closeadduserModal()">&times;</span>
+                        <h2 id="modalTitle">Add User</h2>
+                
+                        <label>First Name</label>
+                        <input type="text" id="addmodalFname">
+                        
+                        <label>Last Name</label>
+                        <input type="text" id="addmodalLname">
+                
+                        <label>Email</label>
+                        <input type="email" id="addmodalEmail">
+                
+                        <label>Phone Number</label>
+                        <input type="tel" id="addmodalPhone">
+                
+                        <label>Alternate Phone Number</label>
+                        <input type="tel" id="addmodalAltPhone">
+                
+                        <label>Date Of Birth</label>
+                        <input type="date" id="addmodaldob">
+                
+                        <label>Address</label>
+                        <input type="text" id="addmodalAddress">
+                
+                        <label>District</label>
+                        <input type="text" id="addmodalDistrict">
+                
+                        <label>State</label>
+                        <input type="text" id="addmodalState">
+                
+                        <label>Pincode</label>
+                        <input type="text" id="addmodalPincode">
+                
+                        <button class="edit-btn" id="saveButton" onclick="saveadduserChanges()">Save</button>
+                    </div>
+                </div>
+                
+
+                <div id="deleteUserModal" class="modal">
+                    <div class="modal-content">
+                        <h2>Confirm Deletion</h2>
+                        <p>Are you sure you want to make this User as Inactive User?</p>
+                        <button id="confirmDeleteBtn" class="edit-btn">Yes</button>
+                        <button id="cancelDeleteBtn" class="edit-btn">No</button>
+                    </div>
+                </div>
+ 
+            </div>
+
+
+            <div id="recharge-history" class="section">
+                <h3>Recharge History</h3>
+                <table id="history-table">
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                            <th>Plan ID</th>
+                            <th>Amount</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transaction-body">
+                        
+                    </tbody>
+
+                </table>
+            </div>
+
+
+
+            <div id="recharge-plans" class="section">
+
+            <h3>Plan Management</h3>
+
+
+            <div style="width: 100%;">
+                <button class="add-button" onclick="addCategory()">Add Category</button>
+                <button class="add-button" onclick="openDeleteCategoryModal()">Delete Category</button>
+                <hr>
+
+            </div>
+
+            <div>
+                <div class="dropdown" style="padding-left: 1000px;">
+                    <button class="dropdown-button" onclick="toggleDropdown()">Select Category</button>
+                    <div class="dropdown-content tab-buttons"></div>
+                </div>
+
+                <div id="plan-container">
+                    
+                </div>
+
+                <div id="deleteCategoryModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="closeDeleteCategoryModal()">&times;</span><br>
+                        <h2>Select Categories to Delete</h2>
+                        <div id="categoryList"></div>
+                        <button class="save-btn" onclick="deleteSelectedCategories()">Delete Selected Categories</button>
+                    </div>
+                </div>
+        
+                <div id="addModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="document.getElementById('addModal').style.display='none'">&times;</span>
+                        <h2>Add Plan</h2>
+
+                        
+                        <div class="form-group">
+                            <label for="addPlanPrice">Plan Price (₹):</label>
+                            <input type="number" id="addPlanPrice" name="addPlanPrice">
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="addValidity">Validity (Days):</label>
+                            <input type="number" id="addValidity" name="addValidity">
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="addDataPerDay">Data/Day (GB):</label>
+                            <input type="number" id="addDataPerDay" name="addDataPerDay" step="0.1">
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="addSmsValidity">SMS Validity:</label>
+                            <input type="number" id="addSmsValidity" name="addSmsValidity">
+                        </div>
+                
+                        <div class="form-group">
+                            <label>OTT Plans:</label>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" id="addNetflix" name="addOtt" value="Netflix"> Netflix</label>
+                                <label><input type="checkbox" id="addDisney" name="addOtt" value="Disney+"> Disney+</label>
+                                <label><input type="checkbox" id="addPrime" name="addOtt" value="Prime"> Prime</label>
+                            </div>
+                        </div>
+                        
+                        <button class="save-btn" onclick="addPlan()">Add Plan</button>
+                    </div>
+                </div>
+
+                <div id="addCategoryModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="document.getElementById('addCategoryModal').style.display='none'">&times;</span>
+                        <h2>Add Category</h2>
+
+                        <div class="form-group">
+                            <label for="addcategoryDisplay">Category Name :</label>
+                            <input type="text" id="addcategoryDisplayName" name="addcategoryDisplay" required>
+                        </div>
+
+                        <button class="save-btn" onclick="addCategoryModal()">Add</button>
+                    </div>
+                </div>
+
+               
+                
+                <div id="addModalTopup" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="document.getElementById('addModalTopup').style.display='none'">&times;</span>
+                        <h2>Add Plan</h2>
+
+                        
+                        <div class="form-group">
+                            <label for="addPriceTopup">Plan Price (₹):</label>
+                            <input type="number" id="addPriceTopup" name="addPrice" min="0" required>
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="addValidityTopup">Validity (Days):</label>
+                            <input type="text" id="addValidityTopup" name="addValidity1" min="0" required>
+                           
+                        </div>
+                        <p>0 - "Unlimited Validity"</p>
+                        <br>
+                
+                        <div class="form-group">
+                            <label for="addTalktimeTopup">Talktime (₹):</label>
+                            <input type="number" id="addTalktimeTopup" name="addTalktime" min="0" required>
+                        </div>
+                
+                        <button class="save-btn" onclick="addPlan()">Add</button>
+                    </div>
+                </div>
+                
+                <div id="addModalData" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="document.getElementById('addModalData').style.display='none'">&times;</span>
+                        <h2>Add Plan</h2>
+
+                        
+                        <div class="form-group">
+                            <label for="addPriceData">Plan Price (₹):</label>
+                            <input type="number" id="addPriceData" name="addPrice" min="0" required>
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="addValidityData">Validity (Days):</label>
+                            <input type="number" id="addValidityData" name="addValidity" min="0" required>
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="addData">Data per Day (GB):</label>
+                            <input type="number" id="addData" name="addData" min="0" step="0.5" required>
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="addSmsValidityData">SMS Validity:</label>
+                            <input type="number" id="addSmsValidityData" name="addSmsValidity" min="0" required>
+                        </div>
+                
+                        <button class="save-btn" onclick="addPlan()">Add</button>
+                    </div>
+                </div>
+                
+                <div id="addModalVoice" class="modal">
+                    
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="document.getElementById('addModalVoice').style.display='none'">&times;</span>
+                        <h2>Add Plan</h2>
+                        
+                        <div class="form-group">
+                            <label for="addPriceVoice">Plan Price (₹):</label>
+                            <input type="number" id="addPriceVoice" name="addPrice" min="0" required>
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="addValidityVoice">Validity (Days):</label>
+                            <input type="number" id="addValidityVoice" name="addValidity" min="0" required>
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="addVoiceValidityVoice">Voice Validity:</label>
+                            <input type="text" id="addVoiceValidityVoice" name="addVoiceValidity" required>
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="addSmsValidityVoice">SMS Validity:</label>
+                            <input type="number" id="addSmsValidityVoice" name="addSmsValidity" min="0" required>
+                        </div>
+                
+                        <button class="save-btn" onclick="addPlan()">Add</button>
+                    </div>
+                </div>
+                
+
+            
+                <div id="deleteModal" class="modal">
+                    <div class="modal-content">
+                        <h2>Delete Plan</h2>
+                        <p>Are you sure you want to delete this plan?</p>
+                        <button class="add-button" onclick="confirmDelete()">Yes</button>
+                        <button class="add-button" onclick="closeDeleteModal()">No</button>
+                    </div>
+                </div>
+        
+            
+                <div id="editModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="closeEditModal()">&times;</span>
+                        <h2>Edit Plan</h2>
+                        
+                        <input type="hidden" id="editPlanId">
+                        
+                        <div class="form-group">
+                            <label for="editPlanPrice">Plan Price (₹):</label>
+                            <input type="number" id="editPlanPrice" name="editPlanPrice">
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="editValidity">Validity (Days):</label>
+                            <input type="number" id="editValidity" name="editValidity">
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="editDataPerDay">Data/Day (GB):</label>
+                            <input type="number" id="editDataPerDay" name="editDataPerDay" step="0.1">
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="editSmsValidity">SMS Validity:</label>
+                            <input type="number" id="editSmsValidity" name="editSmsValidity">
+                        </div>
+                
+                        <div class="form-group">
+                            <label>OTT Plans:</label>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" id="editNetflix" name="editOtt" value="Netflix"> Netflix</label>
+                                <label><input type="checkbox" id="editDisney" name="editOtt" value="Disney+"> Disney+</label>
+                                <label><input type="checkbox" id="editPrime" name="editOtt" value="Prime"> Prime</label>
+                            </div>
+                        </div>
+                        
+                        <button class="save-btn" onclick="savePlan()">Save Changes</button>
+                    </div>
+                </div>
+
+                <div id="editModalTopup" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="closeEditModal()">&times;</span>
+                        <h2>Edit Plan</h2>
+                        <input type="hidden" id="editPlanIdTopup">
+
+                            
+                        <div class="form-group">
+                            <label for="editPrice">Plan Price (₹):</label>
+                            <input type="number" id="editPriceTopup" name="editPrice" min="0" required>
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="editValidity1">Validity (Days):</label>
+                            <input type="text" id="editValidityTopup" name="editValidity1" min="0" required>
+                            
+                        </div>
+                            <p>0 - "Unlimited Validity"</p><br>
+                
+                        <div class="form-group">
+                            <label for="editTalktime">Talktime (₹):</label>
+                            <input type="number" id="editTalktimeTopup" name="editTalktime" min="0" required>
+                        </div>
+                
+                        <button class="save-btn" onclick="savePlan()">Save</button>
+                    </div>
+                </div>
+                
+                
+                    <div id="editModalData" class="modal">
+                        <div class="modal-content">
+                            <span class="close-btn" onclick="closeEditModal()">&times;</span>
+                            <h2>Edit Plan</h2>
+                            <input type="hidden" id="editPlanIdData">
+
+                            <div class="form-group">
+                                <label for="editPrice">Plan Price (₹):</label>
+                                <input type="number" id="editPriceData" name="editPrice" min="0" required>
+                            </div>
+                    
+                            <div class="form-group">
+                                <label for="editValidity">Validity (Days):</label>
+                                <input type="number" id="editValidityData" name="editValidity" min="0" required>
+                            </div>
+                    
+                            <div class="form-group">
+                                <label for="editData">Data per Day (GB):</label>
+                                <input type="number" id="editData" name="editData" min="0" step="0.5" required>
+                            </div>
+                    
+                            <div class="form-group">
+                                <label for="editSmsValidity">SMS Validity:</label>
+                                <input type="number" id="editSmsValidityData" name="editSmsValidity" min="0" required>
+                            </div>
+                    
+                            <button class="save-btn" onclick="savePlan()">Save</button>
+                        </div>
+                    </div>
+                
+                
+                    <div id="editModalVoice" class="modal">
+                        <div class="modal-content">
+                            <span class="close-btn" onclick="closeEditModal()">&times;</span>
+                            <h2>Edit Plan</h2>
+                            <input type="hidden" id="editPlanIdVoice">
+
+                            
+                            <div class="form-group">
+                                <label for="editPrice">Plan Price (₹):</label>
+                                <input type="number" id="editPriceVoice" name="editPrice" min="0" required>
+                            </div>
+                    
+                            <div class="form-group">
+                                <label for="editValidity">Validity (Days):</label>
+                                <input type="number" id="editValidityVoice" name="editValidity" min="0" required>
+                            </div>
+                    
+                            <div class="form-group">
+                                <label for="editVoiceValidity">Voice Validity:</label>
+                                <input type="text" id="editVoiceValidityVoice" name="editVoiceValidity" required>
+                            </div>
+                    
+                            <div class="form-group">
+                                <label for="editSmsValidity">SMS Validity:</label>
+                                <input type="number" id="editSmsValidityVoice" name="editSmsValidity" min="0" required>
+                            </div>
+                    
+                            <button class="save-btn" onclick="savePlan()">Save</button>
+                        </div>
+                    </div>
+
+              </div>
+
+            
+            </div>
+            
+        
+            <div id="settings" class="section1">
+                <h3>System Settings</h3>
+                <form id="settings-form">
+                    <label for="site-name">Site Name:</label>
+                    <input type="text" id="site-name" name="site-name" value="Prepaid Recharge System">
+
+                    <label for="currency">Default Currency:</label>
+                    <select id="currency" name="currency">
+                        <option value="USD">USD - US Dollar</option>
+                        <option value="INR" selected>INR - Indian Rupee</option>
+                        <option value="EUR">EUR - Euro</option>
+                    </select>
+
+                    <label for="min-recharge">Minimum Recharge Amount:</label>
+                    <input type="number" id="min-recharge" name="min-recharge" value="10">
+
+                    <label for="max-recharge">Maximum Recharge Amount:</label>
+                    <input type="number" id="max-recharge" name="max-recharge" value="5000">
+
+                    <label for="timezone">System Timezone:</label>
+                    <select id="timezone" name="timezone">
+                        <option value="UTC">UTC</option>
+                        <option value="IST" selected>IST - Indian Standard Time</option>
+                        <option value="EST">EST - Eastern Standard Time</option>
+                    </select>
+
+                    <label for="support-email">Support Email:</label>
+                    <input type="email" id="support-email" name="support-email" value="support@prepaidrecharge.com">
+
+                    <label for="auto-refund">Auto Refund Failed Transactions:</label>
+                    <select id="auto-refund" name="auto-refund">
+                        <option value="yes" selected>Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    <br>
+                    <br>
+
+                    <button type="submit">Save Settings</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    
+
+</body>
+<script>
+
+async function openDeleteCategoryModal() {
+    let categoryList = document.getElementById("categoryList");
+    categoryList.innerHTML = ""; // Clear existing content
+
+    const token = localStorage.getItem("accessToken");
+    try {
+        const response = await fetch("http://localhost:8080/api/both/Category/getCategory",{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+        });
+        if (!response.ok) throw new Error("Failed to fetch categories");
+
+        const data = await response.json();
+
+        data.forEach(categoryItem => {
+            let checkbox = `
+                <div class="form-group">
+                    <div style="align-items:'center';">
+                    <input type="checkbox" name="categories" id="${categoryItem.categoryId}" value="${categoryItem.categoryId}">
+                    </div>
+                    <label for="${categoryItem.categoryId}">${categoryItem.categoryDisplayName}</label>
+                </div>`;
+            categoryList.innerHTML += checkbox;
+        });
+
+        document.getElementById("deleteCategoryModal").style.display = "block"; // Show modal
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+    }
+}
+
+function closeDeleteCategoryModal() {
+    document.getElementById("deleteCategoryModal").style.display = "none"; // Hide modal
+}
+
+async function deleteSelectedCategories() {
+    let selectedCategories = [];
+    document.querySelectorAll("input[name='categories']:checked").forEach(checkbox => {
+        selectedCategories.push(checkbox.value);
+    });
+
+    if (selectedCategories.length === 0) {
+
+        Toastify({
+            text: "No Category Selected",
+            duration: 3000,
+            gravity: "top", 
+            position: "right",
+            backgroundColor: "yellow",
+        }).showToast();
+
+        return;
+    }
+
+    const token = localStorage.getItem("accessToken");
+    try {
+        const response = await fetch("http://localhost:8080/api/admin/Category/delete", {
+            method: "POST", // Assuming backend supports POST for bulk delete
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ categoryIds: selectedCategories })
+        });
+
+        if (!response.ok) throw new Error("Failed to delete categories");
+
+        for (const categoryId of selectedCategories) {
+        
+            const response = await fetch(`http://localhost:8080/api/admin/deleteByCategory/${categoryId}`, {
+                method: "DELETE",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            });
+        }
+        
+        
+        Toastify({
+            text: "Deleted Successfully",
+            duration: 3000,
+            gravity: "top", 
+            position: "right",
+            backgroundColor: "green",
+        }).showToast();
+
+        closeDeleteCategoryModal();
+
+        
+        renderCategory();
+        location.reload(); 
+    } catch (error) {
+        console.error("Error deleting categories:", error);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", renderCategory);
+ async function renderCategory() {
+    const container = document.getElementById("plan-container"); 
+
+    const token = localStorage.getItem("accessToken");
+
+    try {
+        const response = await fetch("http://localhost:8080/api/both/Category/getCategory" ,{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error("Failed to fetch categories");
+        }
+
+        const categories = await response.json();
+
+        container.innerHTML = ""; 
+
+        categories.forEach(category => {
+            if(category.categoryName == "DataPlans"){
+                let sectionHTML = `
+                <section class="content" id="${category.categoryName}">
+                        <h2>${category.categoryDisplayName}</h2>
+                    <button class="add-button" onclick="openAddModal('${category.categoryName}')">
+                        Add ${category.categoryDisplayName} 
+                    </button>
+                    <table id="${category.categoryName}Table">
+                        <thead>
+                            <tr>
+                                 <th>Plan ID</th>
+                                 <th>Price (₹)</th>
+                                 <th>Validity (Days)</th>
+                                 <th>Data (GB)</th>
+                                 <th>SMS Validity</th>
+                                 <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </section>
+            `;
+            container.innerHTML += sectionHTML;
+            }
+
+            else if(category.categoryName == "TopUpPlans"){
+                let sectionHTML = `
+                <section class="content" id="${category.categoryName}">
+                    <h2>${category.categoryDisplayName}</h2>
+                    <button class="add-button" onclick="openAddModal('${category.categoryName}')">
+                        Add ${category.categoryDisplayName} 
+                    </button>
+                    <table id="${category.categoryName}Table">
+                        <thead>
+                            <tr>
+                               <th>Plan ID</th>
+            <th>Price (₹)</th>
+            <th>Validity (Days)</th>
+            <th>Talktime (₹)</th>
+            <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </section>
+            `;
+            container.innerHTML += sectionHTML;
+            }
+            else if(category.categoryName == "VoiceOnlyPlans"){
+                let sectionHTML = `
+                <section class="content" id="${category.categoryName}">
+                    <h2>${category.categoryDisplayName}</h2>
+                    <button class="add-button" onclick="openAddModal('${category.categoryName}')">
+                        Add ${category.categoryDisplayName} 
+                    </button>
+                    <table id="${category.categoryName}Table">
+                        <thead>
+                            <tr>
+                                <th>Plan ID</th>
+            <th>Price (₹)</th>
+            <th>Validity (Days)</th>
+            <th>Voice</th>
+            <th>SMS Validity</th>
+            <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </section>
+            `;
+            container.innerHTML += sectionHTML;
+            }
+            else{
+            let sectionHTML = `
+                <section class="content" id="${category.categoryName}">
+                    <h2>${category.categoryDisplayName}</h2>
+                    <button class="add-button" onclick="openAddModal('${category.categoryName}')">
+                        Add ${category.categoryDisplayName} 
+                    </button>
+                    <table id="${category.categoryName}Table">
+                        <thead>
+                            <tr>
+                                <th>Plan ID</th>
+                                <th>Plan Price (₹)</th>
+                                <th>Validity (Days)</th>
+                                <th>Data/Day (GB)</th>
+                                <th>SMS Validity</th>
+                                <th>OTT Plans</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </section>
+            `;
+            container.innerHTML += sectionHTML;
+            }
+        }
+    );
+    tabcontent = document.getElementsByClassName("content");
+
+   for (i = 1; i < tabcontent.length; i++) {
+       tabcontent[i].style.display = "none";
+   }
+
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+    }
+}
+
+
+async function addCategoryModal(){
+    let CName;
+    let CDName = document.getElementById("addcategoryDisplayName").value;
+
+    CName = CDName.replace(" ","");
+    const token = localStorage.getItem("accessToken");
+    await fetch("http://localhost:8080/api/admin/Category/addCategory" , {
+        method:"POST",
+        headers : {
+            "Content-Type" : "application/JSON",
+            "Authorization": `Bearer ${token}`
+        },
+        body : JSON.stringify({categoryName : CName , categoryDisplayName : CDName})
+
+    })
+    .then(response => {
+        if(!response.ok){
+            Toastify({
+            text: "Category already exists!",
+            duration: 3000,
+            gravity: "top", 
+            position: "right",
+            backgroundColor: "red",
+        }).showToast();
+        }
+        return response.json();
+    })
+    .then(data =>{
+        Toastify({
+            text: "Category added successfully!",
+            duration: 3000,
+            gravity: "top", 
+            position: "right",
+            backgroundColor: "green",
+        }).showToast();
+
+        document.getElementById("addCategoryModal").style.display = "none";
+
+        setTimeout(() => {
+
+        } , 4000);
+        renderCategory();
+        location.reload(); 
+    })
+    
+
+
+}
+
+async function fetchCategory(){
+    let category = document.getElementsByClassName("tab-buttons")[0];
+category.innerHTML = "";
+const token = localStorage.getItem("accessToken");
+
+await fetch("http://localhost:8080/api/both/Category/getCategory",{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+        })
+    .then(response => {
+        if (!response.ok) {
+        }
+        return response.json();
+    })
+    .then(data => {
+        data.forEach(categoryItem => {
+            let info = `<a href="#" onclick="openTab(event, '${categoryItem.categoryName}')">
+                                ${categoryItem.categoryDisplayName}
+                        </a>`;
+            category.innerHTML += info; 
+        });
+    })
+    .catch(error => {
+        console.error("Error fetching categories:", error);
+    });
+
+
+}
+
+function toggleDropdown() {
+    document.querySelector(".dropdown-content").classList.toggle("show");
+
+}
+window.onclick = function(event) {
+    if (!event.target.matches('.dropdown-button')) {
+        document.querySelector(".dropdown-content").classList.remove("show");
+    }
+}
+document.getElementById("addCategoryModal").style.display = "none";
+
+
+function addCategory(){
+    document.getElementById("addCategoryModal").style.display = "block";
+}
+
+
+let categoryName;
+    function openAddModal(category){
+        categoryName=category;
+        if(category=="DataPlans"){
+            document.getElementById("addModalData").style.display="block";
+        }
+        else if(category=="VoiceOnlyPlans"){
+            document.getElementById("addModalVoice").style.display="block";
+        }
+        else if(category=="TopUpPlans"){
+            document.getElementById("addModalTopup").style.display="block";
+        }
+        else{
+            document.getElementById("addModal").style.display="block";
+        }
+    }
+async function loadPlans(category) {
+    const token = localStorage.getItem("accessToken");
+    const apiUrl = `http://localhost:8080/api/both/plans/category/${category}`; 
+
+    try {
+        const response = await fetch(apiUrl ,{
+            method:"GET",
+            headers : {
+                "Authorization" : `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) {
+            return;
+        }
+
+        const plans = await response.json();
+        console.log("Fetched Plans:", plans); 
+
+        let tableBody = document.getElementById(`${category}Table`).querySelector("tbody");
+        if (!tableBody) {
+            console.warn(`Table body '${category}Table' not found.`);
+            return;
+        }
+        tableBody.innerHTML = ""; 
+
+        plans.forEach(plan => {
+            let row = "";
+
+            if (category === "DataPlans") {
+                
+                row = `
+                    <tr>
+                        <td>${plan.planId}</td>
+                        <td>₹${plan.planPrice}</td>
+                        <td>${plan.planValidityInDays} Days</td>
+                        <td>${plan.planOverallData ? plan.planOverallData + ' GB' : 'N/A'}</td>
+                        <td>${plan.planSmsValidity ?? 0 } SMS / Day</td>
+                        <td>
+                            <button class="tooltip">
+                            <span class="material-icons" onclick="openEditModal('DataPlans', ${plan.planId})">edit</span>
+                            <span class="tooltip-text">Edit</span>
+                        </button>
+                        <button class="tooltip">
+                            <span class="material-icons" onclick="deletePlan('DataPlans', ${plan.planId})">delete</span>
+                            <span class="tooltip-text">Delete</span>
+                        </button> 
+                        </td>
+                    </tr>
+                `;
+            } 
+            else if (category === "TopUpPlans") {
+                row = `
+                    <tr>
+                        <td>${plan.planId}</td>
+                        <td>₹${plan.planPrice}</td>
+                        <td>${plan.planValidityInDays !== 0 ? plan.planValidityInDays + " Days" : "Unlimited"}</td>
+                        <td>₹${plan.planTalkTime}</td>
+                        <td>
+                            <button class="tooltip">
+                            <span class="material-icons" onclick="openEditModal('TopUpPlans', ${plan.planId})">edit</span>
+                            <span class="tooltip-text">Edit</span>
+                        </button>
+                        <button class="tooltip">
+                            <span class="material-icons" onclick="deletePlan('TopUpPlans', ${plan.planId})">delete</span>
+                            <span class="tooltip-text">Delete</span>
+                        </button>                        
+                        </td>
+                    </tr>
+                `;
+            } 
+            else if (category === "VoiceOnlyPlans") {
+                row = `
+                    <tr>
+                        <td>${plan.planId}</td>
+                        <td>₹${plan.planPrice}</td>
+                        <td>${plan.planValidityInDays} Days</td>
+                        <td>${plan.planVoiceValidity}</td>
+                        <td>${plan.planSmsValidity ?? 0} SMS/Day</td>
+                        <td>
+                            <button class="tooltip">
+                            <span class="material-icons" onclick="openEditModal('VoiceOnlyPlans', ${plan.planId})">edit</span>
+                            <span class="tooltip-text">Edit</span>
+                        </button>
+                        <button class="tooltip">
+                            <span class="material-icons" onclick="deletePlan('VoiceOnlyPlans', ${plan.planId})">delete</span>
+                            <span class="tooltip-text">Delete</span>
+                        </button>                        
+                        </td>
+                    </tr>
+                `;
+            } 
+            else {
+                let ottIcons = generateOTTIcons(plan.planOttOffers);
+                row = `
+                    <tr>
+                        <td>${plan.planId}</td>
+                        <td>₹${plan.planPrice}</td>
+                        <td>${plan.planValidityInDays} Days</td>
+                        <td>${plan.planDataPerDay ? plan.planDataPerDay + ' GB/Day' : 'N/A'}</td>
+                        <td>${plan.planSmsValidity ?? 0 } SMS/Day</td>
+                        <td>${ottIcons}</td>
+                        <td>
+                            <button class="tooltip">
+                            <span class="material-icons" onclick="openEditModal('${category}',${plan.planId})">edit</span>
+                            <span class="tooltip-text">Edit</span>
+                        </button>
+                        <button class="tooltip">
+                            <span class="material-icons" onclick="deletePlan('${category}',${plan.planId})">delete</span>
+                            <span class="tooltip-text">Delete</span>
+                        </button>                       
+                         </td>
+                    </tr>
+                `;
+            }
+
+            tableBody.innerHTML += row;
+        });
+
+    } catch (error) {
+        console.error("Error fetching plans:", error);
+    }
+}
+
+function generateOTTIcons(ottPlans) {
+    if (!ottPlans) return "";
+    let ottMap = {
+        "Netflix": "🎬",
+        "Disney+": "📺",
+        "Prime": "🎥"
+    };
+    return ottPlans.split(",").map(ott => `
+        <div class="icons" title="${ott.trim()}">${ottMap[ott.trim()] || ''}</div>
+    `).join("");
+}
+
+function openTab(evt, tabName) {
+
+   var i, tabcontent, tabbuttons;
+   tabcontent = document.getElementsByClassName("content");
+
+   for (i = 0; i < tabcontent.length; i++) {
+       tabcontent[i].style.display = "none";
+   }
+
+   tabbuttons = document.getElementsByClassName("tab-button");
+   for (i = 0; i < tabbuttons.length; i++) {
+       tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+   }
+
+   document.getElementById(tabName).style.display = "block";
+   evt.currentTarget.className += " active";
+
+   loadPlans(tabName);
+}
+
+document.querySelectorAll(".sidebar li a").forEach(item => {
+            item.addEventListener("click", function() {
+                document.querySelectorAll(".sidebar li a").forEach(link => {
+                    link.classList.remove("active");
+                });
+        
+                this.classList.add("active");
+            });
+        });
+
+    document.getElementById("expiry-users").style.display = 'block';
+    document.getElementById("user-management").style.display = 'none';
+    document.getElementById("recharge-history").style.display = 'none';
+    document.getElementById("recharge-plans").style.display = 'none';
+    document.getElementById("settings").style.display = 'none';
+
+    function changeContent(input) {
+        
+        if(input == 1){
+            fetchUser();
+        }
+
+        if(input == 2){
+            fetchTransactions();
+        }
+
+        if(input == 3){
+            fetchCategory();
+            loadPlans('RecommendedPlans')
+        }
+        const sections = ["user-management", "recharge-history", "recharge-plans", "settings", "expiry-users"];
+
+        sections.forEach((section, index) => {
+            
+            document.getElementById(section).style.display = (index + 1 === input) ? 'block' : 'none';
+
+        });
+    }
+
+    async function fetchStatistics(){
+        const token = localStorage.getItem("accessToken");
+
+        let stats = await fetch("http://localhost:8080/api/admin/transactions/summary",{
+            method:"GET",
+            headers : {
+                "Authorization" : `Bearer ${token}`
+            }
+        });
+
+        stats = await stats.json();
+
+        document.getElementById("totalTransactions").textContent = stats.totalTransactions;
+        document.getElementById("successTransactions").textContent = stats.successfulTransactions;
+        document.getElementById("failedTransactions").textContent = stats.failedTransactions;
+        document.getElementById("totalRevenue").textContent = "₹ " + stats.totalRevenue;
+
+    }
+
+   
+
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchStatistics();
+        fetchUsers();
+
+        const transactionCtx = document.getElementById('transactionChart').getContext('2d');
+
+        const chartData = {
+            today: {
+                labels: ['00:00', '06:00', '12:00', '18:00', '24:00'],
+                successful: [5, 10, 15, 20, 25],
+                failed: [2, 3, 4, 3, 2]
+            },
+            monthly: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                successful: [85, 95, 80, 90, 88, 92],
+                failed: [15, 12, 18, 10, 14, 11]
+            },
+            quarterly: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                successful: [260, 275, 280, 290],
+                failed: [45, 40, 38, 35]
+            },
+            yearly: {
+                labels: ['2021', '2022', '2023', '2024'],
+                successful: [1000, 1100, 1200, 1300],
+                failed: [150, 140, 130, 120]
+            }
+           
+        };
+
+        let transactionChart = new Chart(transactionCtx, {
+            type: 'bar',
+            data: {
+                labels: chartData.monthly.labels,
+                datasets: [
+                    {
+                        label: 'Successful',
+                        data: chartData.monthly.successful,
+                        backgroundColor: 'green'
+                    },
+                    {
+                        label: 'Failed',
+                        data: chartData.monthly.failed,
+                        backgroundColor: 'red'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        function updateChart(period) {
+            const selectedData = chartData[period];
+            transactionChart.data.labels = selectedData.labels;
+            transactionChart.data.datasets[0].data = selectedData.successful;
+            transactionChart.data.datasets[1].data = selectedData.failed;
+            transactionChart.update();
+        }
+
+        document.getElementById('periodSelect').addEventListener('change', function () {
+            updateChart(this.value);
+        });
+    });
+
+
+    const paymentCtx = document.getElementById('paymentChart').getContext('2d');
+    const paymentChart = new Chart(paymentCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Credit Card', 'UPI'],
+            datasets: [{
+                label: 'Payment Methods',
+                data: [65, 20],
+                backgroundColor: [
+                    'blue',
+                    'orange',
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            }
+        }
+    });
+
+
+    let currentRow = null;
+
+    function openedituserModal(userId) {
+        const token = localStorage.getItem("accessToken");
+    fetch(`http://localhost:8080/api/both/${userId}`,{
+            method:"GET",
+            headers : {
+                "Authorization" : `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(user => {
+            document.getElementById("modalUserId").value = user.userId;
+            document.getElementById("modalFname").value = user.userFname;
+            document.getElementById("modalLname").value = user.userLname;
+            document.getElementById("modalEmail").value = user.userEmail;
+            document.getElementById("modalPhone").value = user.userPhonenumber;
+            document.getElementById("modalAltPhone").value = user.userAlternatePhonenumber || "";
+            document.getElementById("modaldob").value = user.userDateOfBirth;
+            document.getElementById("modalAddress").value = user.userAddress;
+            document.getElementById("modalDistrict").value = user.userDistrict;
+            document.getElementById("modalState").value = user.userState;
+            document.getElementById("modalPincode").value = user.userPincode;
+
+            document.getElementById("usereditModal").style.display = "block";
+        })
+        .catch(error => console.error("Error fetching user details:", error));
+}
+
+function closeedituserModal() {
+    document.getElementById("usereditModal").style.display = "none";
+}
+
+function saveedituserChanges() {
+    const userId = document.getElementById("modalUserId").value;
+    const firstName = document.getElementById("modalFname").value;
+    const lastName = document.getElementById("modalLname").value;
+    const email = document.getElementById("modalEmail").value;
+    const phone = document.getElementById("modalPhone").value;
+    const altPhone = document.getElementById("modalAltPhone").value;
+    const dob = document.getElementById("modaldob").value;
+    const address = document.getElementById("modalAddress").value;
+    const district = document.getElementById("modalDistrict").value;
+    const state = document.getElementById("modalState").value;
+    const pincode = document.getElementById("modalPincode").value;
+
+    const updatedUser = {
+        userFname: firstName,
+        userLname: lastName,
+        userEmail: email,
+        userPhonenumber: phone,
+        userAlternatePhonenumber: altPhone,
+        userDateOfBirth: dob,
+        userAddress: address,
+        userDistrict: district,
+        userState: state,
+        userPincode: pincode
+    };
+    const token = localStorage.getItem("accessToken");
+    fetch(`http://localhost:8080/api/both/${userId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(updatedUser)
+    })
+    .then(response => response.json())
+    .then(data => {
+        Toastify({
+            text: "User updated successfully!",
+            duration: 3000,
+            gravity: "top", // `top`, `bottom`
+            position: "right", // `left`, `center`, `right`
+            backgroundColor: "green",
+        }).showToast();
+
+        setTimeout(() => {
+
+        } , 4000);
+
+        closeedituserModal();
+        fetchUser(); // Refresh user list
+    })
+    .catch(error => console.error("Error updating user:", error));
+}
+
+function openAdduserModal() {
+    document.getElementById("useraddModal").style.display = "block";
+}
+
+// Function to close Add User modal
+function closeadduserModal() {
+    document.getElementById("useraddModal").style.display = "none";
+}
+function saveadduserChanges() {
+    const firstName = document.getElementById("addmodalFname").value.trim();
+    const lastName = document.getElementById("addmodalLname").value.trim();
+    const email = document.getElementById("addmodalEmail").value.trim();
+    const phone = document.getElementById("addmodalPhone").value.trim();
+    const alternatePhone = document.getElementById("addmodalAltPhone").value.trim();
+    const dob = document.getElementById("addmodaldob").value.trim();
+    const address = document.getElementById("addmodalAddress").value.trim();
+    const district = document.getElementById("addmodalDistrict").value.trim();
+    const state = document.getElementById("addmodalState").value.trim();
+    const pincode = document.getElementById("addmodalPincode").value.trim();
+
+    // Validate required fields
+    if (!firstName || !lastName || !email || !phone || !dob || !address || !district || !state || !pincode) {
+        Toastify({
+            text: "Please fill in all required fields!",
+            duration: 3000,
+            gravity: "top", // `top`, `bottom`
+            position: "right", // `left`, `center`, `right`
+            backgroundColor: "red",
+        }).showToast();
+
+        setTimeout(() => {
+
+        } , 4000);
+        return;
+    }
+
+    const newUser = {
+        userFname: firstName,
+        userLname: lastName,
+        userEmail: email,
+        userPhonenumber: phone,
+        userAlternatePhonenumber: alternatePhone,
+        userDateOfBirth: dob,
+        userAddress: address,
+        userDistrict: district,
+        userState: state,
+        userPincode: pincode,
+        role: { roleId: 1 } // Default to Customer role
+    };
+    const token = localStorage.getItem("accessToken");
+
+    fetch("http://localhost:8080/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+         },
+        body: JSON.stringify(newUser)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to add user");
+        }
+        return response.json();
+    })
+    .then(data => {
+        Toastify({
+            text: "User added successfully!",
+            duration: 3000,
+            gravity: "top", // `top`, `bottom`
+            position: "right", // `left`, `center`, `right`
+            backgroundColor: "green",
+        }).showToast();
+
+        setTimeout(() => {
+
+        } , 4000);
+
+        closeadduserModal();
+        fetchUser(); // Refresh user list
+    })
+    .catch(error => console.error("Error adding user:", error));
+}
+
+
+function validateInput(inputId, errorId) {
+    const input = document.getElementById(inputId).value.trim();
+    let errorMessage = "";
+
+    if (inputId.includes("Fname") && !/^[A-Za-z\s]+$/.test(input)) {
+        errorMessage = "First name should contain only letters.";
+    } else if (inputId.includes("Lname") && !/^[A-Za-z\s]+$/.test(input)) {
+        errorMessage = "Last name should contain only letters.";
+    } else if (inputId.includes("Email") && !/^\S+@\S+\.\S+$/.test(input)) {
+        errorMessage = "Enter a valid email address.";
+    } else if (inputId.includes("Phone") && !/^\d{10}$/.test(input)) {
+        errorMessage = "Phone number must be 10 digits.";
+    } else if (inputId.includes("AltPhone") && input.length > 0 && !/^\d{10}$/.test(input)) {
+        errorMessage = "Alternate phone number must be 10 digits.";
+    } else if (inputId.includes("dob") && new Date(input) >= new Date()) {
+        errorMessage = "Date of Birth must be in the past.";
+    } else if (inputId.includes("Address") && input.length < 5) {
+        errorMessage = "Address should be at least 5 characters long.";
+    } else if (inputId.includes("District") && input.length < 3) {
+        errorMessage = "District should be at least 3 characters long.";
+    } else if (inputId.includes("State") && input.length < 3) {
+        errorMessage = "State should be at least 3 characters long.";
+    } else if (inputId.includes("Pincode") && !/^\d{6}$/.test(input)) {
+        errorMessage = "Pincode must be exactly 6 digits.";
+    }
+
+    document.getElementById(errorId).textContent = errorMessage;
+}
+ 
+   
+    function downloadTableAsCSV() {
+        const table = document.getElementById("user-table-expiry");
+        const rows = table.querySelectorAll("tr");
+        let csvContent = "";
+
+        rows.forEach(row => {
+            let rowData = []; 
+            row.querySelectorAll("th, td").forEach(cell => {
+                rowData.push(cell.innerText);
+            });
+            csvContent += rowData.join(",") + "\n";
+        });
+
+        const blob = new Blob([csvContent], { type: "text/csv" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "user_table.csv";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function initializePagination(tableId, containerClass) {
+    const rowsPerPage = 10; // Display only 5 rows per page
+    const maxPageButtons = 5; // Maximum number of page buttons to show
+    const table = document.getElementById(tableId);
+    if (!table) return;
+    const tbody = table.querySelector("tbody");
+    const rows = Array.from(tbody.getElementsByTagName("tr"));
+    const totalPages = Math.ceil(rows.length / rowsPerPage);
+    let currentPage = 1;
+
+    function displayPage(page) {
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        rows.forEach((row, index) => {
+            row.style.display = index >= start && index < end ? "table-row" : "none";
+        });
+    }
+
+    function createPagination() {
+        const existingContainer = document.querySelector(`.${containerClass}`);
+        if (existingContainer) existingContainer.remove();
+
+        const paginationContainer = document.createElement("div");
+        paginationContainer.className = containerClass;
+        
+        const paginationControls = document.createElement("div");
+        paginationControls.className = "pagination-controls";
+
+        // Previous Button
+        const prevButton = createButton("Previous", () => changePage(currentPage - 1));
+        prevButton.id = `${containerClass}-prev`;
+        paginationControls.appendChild(prevButton);
+
+        // Page Number Buttons Container
+        const pageNumbersContainer = document.createElement("span");
+        pageNumbersContainer.className = "page-numbers";
+        paginationControls.appendChild(pageNumbersContainer);
+
+        // Next Button
+        const nextButton = createButton("Next", () => changePage(currentPage + 1));
+        nextButton.id = `${containerClass}-next`;
+        paginationControls.appendChild(nextButton);
+
+        // Page Info
+        const pageInfoDiv = document.createElement("div");
+        pageInfoDiv.className = "pagination-info";
+        paginationContainer.appendChild(paginationControls);
+        paginationContainer.appendChild(pageInfoDiv);
+
+        table.parentElement.appendChild(paginationContainer);
+        updatePagination();
+    }
+
+    function createButton(text, onClick) {
+        const button = document.createElement("button");
+        button.innerText = text;
+        button.className = "pagination-btn";
+        button.onclick = onClick;
+        return button;
+    }
+
+    function changePage(page) {
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        displayPage(currentPage);
+        updatePagination();
+    }
+
+    function updatePagination() {
+        const pageNumbersContainer = document.querySelector(`.${containerClass} .page-numbers`);
+        pageNumbersContainer.innerHTML = "";
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+
+        if (endPage - startPage + 1 < maxPageButtons) {
+            startPage = Math.max(1, endPage - maxPageButtons + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const numberBtn = createButton(i, () => changePage(i));
+            numberBtn.dataset.page = i;
+            numberBtn.classList.toggle("active", i === currentPage);
+            pageNumbersContainer.appendChild(numberBtn);
+        }
+
+        // Update page info
+        document.querySelector(`.${containerClass} .pagination-info`).innerText = `Page ${currentPage} of ${totalPages}`;
+
+        // Enable/Disable Previous & Next buttons
+        document.getElementById(`${containerClass}-prev`).disabled = currentPage === 1;
+        document.getElementById(`${containerClass}-next`).disabled = currentPage === totalPages;
+    }
+
+    displayPage(currentPage);
+    createPagination();
+}
+
+
+
+async function openEditModal(tableType, planId) {
+    try {
+        currentTable = tableType;
+        const token = localStorage.getItem("accessToken");
+        
+        // Fetch plan details from the backend API
+        const response = await fetch(`http://localhost:8080/api/both/plans/${planId}`,{
+            method:"GET",
+            headers : {
+                "Authorization" : `Bearer ${token}`
+            }
+        }); // Replace with actual API URL
+        
+        if (!response.ok) {
+            throw new Error(`Failed to fetch plan details. Status: ${response.status}`);
+        }
+        
+        const plan = await response.json(); // Convert response to JSON
+
+        if(tableType == "TopUpPlans"){
+        document.getElementById('editPlanIdTopup').value = plan.planId;
+
+        document.getElementById('editPriceTopup').value = plan.planPrice;
+        document.getElementById('editValidityTopup').value = plan.planValidityInDays == 0 ? "Unlimited" :plan.planValidityInDays;
+        document.getElementById('editTalktimeTopup').value = plan.planTalkTime || 0; // Default to 0 if null
+
+        // Show the edit modal
+        document.getElementById("editModalTopup").style.display = 'block';
+        }
+        else if(tableType == "VoiceOnlyPlans"){
+        document.getElementById('editPlanIdVoice').value = plan.planId;
+        document.getElementById('editPriceVoice').value = plan.planPrice;
+        document.getElementById('editValidityVoice').value = plan.planValidityInDays;
+        document.getElementById('editVoiceValidityVoice').value = plan.planVoiceValidity == null ? "Unlimited" :plan.planVoiceValidity; // Default to empty if null
+        document.getElementById('editSmsValidityVoice').value = plan.planSmsValidity || 0; // Default to 0 if null
+
+        // Show the edit modal
+        document.getElementById("editModalVoice").style.display = 'block';
+        }
+        else if(tableType == "DataPlans"){
+
+        document.getElementById('editPlanIdData').value = plan.planId;
+
+        document.getElementById('editPriceData').value = plan.planPrice;
+        document.getElementById('editValidityData').value = plan.planValidityInDays;
+        document.getElementById('editData').value = plan.planDataPerDay || 0; // Default to 0 if null
+        document.getElementById('editSmsValidityData').value = plan.planSmsValidity || 0; // Default to 0 if null
+
+        // Show the edit modal
+        document.getElementById("editModalData").style.display = 'block';
+        }
+        else{
+        document.getElementById('editPlanId').value = plan.planId;
+
+        document.getElementById('editPlanId').value = plan.planId;
+        document.getElementById('editPlanPrice').value = plan.planPrice;
+        document.getElementById('editValidity').value = plan.planValidityInDays;
+        document.getElementById('editDataPerDay').value = plan.planDataPerDay || 0;
+        document.getElementById('editSmsValidity').value = plan.planSmsValidity || 0;
+
+        const ottOffers = plan.planOttOffers ? plan.planOttOffers.split(",") : [];
+        document.getElementById('editNetflix').checked = ottOffers.includes("Netflix");
+        document.getElementById('editDisney').checked = ottOffers.includes("Disney+");
+        document.getElementById('editPrime').checked = ottOffers.includes("Prime");
+
+        document.getElementById("editModal").style.display = 'block';
+        }
+    } catch (error) {
+        console.error("Error fetching plan details:", error);
+        Toastify({
+            text: "Failed to load plan details. Please try again.",
+            duration: 3000,
+            gravity: "top", // `top`, `bottom`
+            position: "right", // `left`, `center`, `right`
+            backgroundColor: "red",
+        }).showToast();
+
+        setTimeout(() => {
+
+        } , 4000);
+    }
+}
+
+       
+
+        function openDeleteModal(tableType, planId) {
+            currentTable = tableType;
+            planToDelete = planId;
+            document.getElementById('deleteModal').style.display = 'block';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            planToDelete = null;
+        }
+
+        
+
+async function savePlan() {
+    try {
+        let updatedPlan = {};
+        let planId;
+
+        // Ensure currentTable is defined
+        if (!currentTable) {
+            console.error("Error: currentTable is not set.");
+            alert("Something went wrong. Please try again.");
+            return;
+        }
+
+        // Different fields based on the plan type
+        if (currentTable === "TopUpPlans") {
+            planId = document.getElementById('editPlanIdTopup').value;
+            updatedPlan.planId = planId;
+            updatedPlan.planPrice = (document.getElementById('editPriceTopup').value);
+            updatedPlan.planValidityInDays = document.getElementById('editValidityTopup').value === "Unlimited" ? 0 : parseInt(document.getElementById('editValidityTopup').value);
+            updatedPlan.planTalkTime = (document.getElementById('editTalktimeTopup').value);
+        } 
+        else if (currentTable === "VoiceOnlyPlans") {
+            planId = document.getElementById('editPlanIdVoice').value;
+            updatedPlan.planId = planId;
+            updatedPlan.planPrice = (document.getElementById('editPriceVoice').value);
+            updatedPlan.planValidityInDays = (document.getElementById('editValidityVoice').value);
+            updatedPlan.planVoiceValidity = document.getElementById('editVoiceValidityVoice').value;
+            updatedPlan.planSmsValidity = (document.getElementById('editSmsValidityVoice').value);
+        } 
+        else if (currentTable === "DataPlans") {
+            planId = document.getElementById('editPlanIdData').value;
+            updatedPlan.planId = planId;
+            updatedPlan.planPrice =(document.getElementById('editPriceData').value);
+            updatedPlan.planValidityInDays = (document.getElementById('editValidityData').value);
+            updatedPlan.planDataPerDay = (document.getElementById('editData').value);
+            updatedPlan.planSmsValidity =(document.getElementById('editSmsValidityData').value);
+            updatedPlan.planOverallData =  updatedPlan.planValidityInDays * updatedPlan.planDataPerDay;
+        } 
+        else {
+            // Default case (OTT Plans)
+            planId = document.getElementById('editPlanId').value;
+            updatedPlan.planId = planId;
+            updatedPlan.planPrice = (document.getElementById('editPlanPrice').value);
+            updatedPlan.planValidityInDays = (document.getElementById('editValidity').value);
+            updatedPlan.planDataPerDay = parseFloat(document.getElementById('editDataPerDay').value);
+            updatedPlan.planSmsValidity = (document.getElementById('editSmsValidity').value);
+            
+            // Get selected OTT offers
+            const ottOffers = [];
+            if (document.getElementById('editNetflix').checked) ottOffers.push("Netflix");
+            if (document.getElementById('editDisney').checked) ottOffers.push("Disney+");
+            if (document.getElementById('editPrime').checked) ottOffers.push("Prime");
+            
+            updatedPlan.planOttOffers = ottOffers.join(",");
+        }
+
+        const token = localStorage.getItem("accessToken");
+        const response = await fetch(`http://localhost:8080/api/admin/plans/update/${currentTable}/${planId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(updatedPlan)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to update plan. Status: ${response.status}`);
+        }
+
+        // Close the appropriate modal
+        const modalId = currentTable === "DataPlans" ? 'editModalData' :
+                        currentTable === "VoiceOnlyPlans" ? 'editModalVoice' :
+                        currentTable === "TopUpPlans" ? 'editModalTopup' : 'editModal';
+        
+        document.getElementById(modalId).style.display = 'none';
+
+        Toastify({
+            text: "Plan updated successfully!",
+            duration: 3000,
+            gravity: "top", // `top`, `bottom`
+            position: "right", // `left`, `center`, `right`
+            backgroundColor: "green",
+        }).showToast();
+
+        setTimeout(() => {
+
+        } , 4000);
+        loadPlans(currentTable);
+
+    } catch (error) {
+        console.error("Error updating plan:", error);
+        Toastify({
+            text: "Failed to update the plan. Please try again.",
+            duration: 3000,
+            gravity: "top", // `top`, `bottom`
+            position: "right", // `left`, `center`, `right`
+            backgroundColor: "red",
+        }).showToast();
+
+        setTimeout(() => {
+
+        } , 4000);
+    }
+}
+
+
+// You might also want to update the closeEditModal function to close the appropriate modal
+function closeEditModal() {
+    if (currentTable === "DataPlans") {
+        document.getElementById('editModalData').style.display = 'none';
+    } else if (currentTable === "VoiceOnlyPlans") {
+        document.getElementById('editModalVoice').style.display = 'none';
+    } else if (currentTable === "TopUpPlans") {
+        document.getElementById('editModalTopup').style.display = 'none';
+    } else {
+        document.getElementById('editModal').style.display = 'none';
+    }
+}
+        function deletePlan(tableType, planId) {
+            currentTable = tableType;
+            planToDelete = planId; 
+            document.getElementById('deleteModal').style.display = 'block';
+        }
+        async function confirmDelete() {
+            const token = localStorage.getItem("accessToken");
+            try {
+            let response = await fetch(`http://localhost:8080/api/admin/plans/delete/${planToDelete}`, {
+                method: "DELETE",
+                headers: {
+                "Authorization": `Bearer ${token}`
+            }
+
+            });
+
+            if (response.ok) {
+                Toastify({
+            text: "Plan deleted successfully!",
+            duration: 3000,
+            gravity: "top", // `top`, `bottom`
+            position: "right", // `left`, `center`, `right`
+            backgroundColor: "green",
+        }).showToast();
+
+        setTimeout(() => {
+
+        } , 4000);
+                closeDeleteModal();
+                loadPlans(currentTable); 
+            }
+        } catch (error) {
+            console.error("Error deleting plan:", error);
+        }
+        }
+
+ function addPlan() {
+    let planData = {};
+
+    if (categoryName == "VoiceOnlyPlans") {
+        planData = {
+            planPrice: document.getElementById("addPriceVoice").value,
+            planValidityInDays: document.getElementById("addValidityVoice").value,
+            planVoiceValidity: document.getElementById("addVoiceValidityVoice").value,
+            planSmsValidity: document.getElementById("addSmsValidityVoice").value
+        };
+
+        document.getElementById("addPlanPrice").value ="";
+        document.getElementById("addValidity").value ="";
+        document.getElementById("addDataPerDay").value ="";
+        document.getElementById("addSmsValidity").value ="";
+       
+    } else if (categoryName == "TopUpPlans") {
+        // Top-Up Plan
+        planData = {
+            planPrice: document.getElementById("addPriceTopup").value,
+            planValidityInDays: document.getElementById("addValidityTopup").value,
+            planTalkTime: document.getElementById("addTalktimeTopup").value
+        };
+
+        document.getElementById("addPriceTopup").value ="";
+        document.getElementById("addValidityTopup").value  ="";
+        document.getElementById("addTalktimeTopup").value  ="";
+    } else if (categoryName == "DataPlans") {
+        // Data Plan
+        planData = {
+            planPrice: document.getElementById("addPriceData").value,
+            planValidityInDays: document.getElementById("addValidityData").value,
+            planDataPerDay: document.getElementById("addData").value,
+            planSmsValidity: document.getElementById("addSmsValidityData").value
+        };
+
+        document.getElementById("addPriceData").value  ="";
+        document.getElementById("addValidityData").value ="";
+        document.getElementById("addData").value  ="";
+        document.getElementById("addSmsValidityData").value  ="";
+    } else {
+
+        planData = {
+            planPrice: document.getElementById("addPlanPrice").value,
+            planValidityInDays: document.getElementById("addValidity").value,
+            planDataPerDay: document.getElementById("addDataPerDay").value,
+            planSmsValidity: document.getElementById("addSmsValidity").value,
+            planOttOffers: getSelectedOTT()
+        };
+        document.getElementById("addPlanPrice").value  ="";
+        document.getElementById("addValidity").value  ="";
+        document.getElementById("addDataPerDay").value  ="";
+        document.getElementById("addSmsValidity").value  ="";
+    }
+
+    const token = localStorage.getItem("accessToken");
+    fetch(`http://localhost:8080/api/admin/plans/add/category/${categoryName}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(planData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        Toastify({
+            text: "Plan added successfully!",
+            duration: 3000,
+            gravity: "top", // `top`, `bottom`
+            position: "right", // `left`, `center`, `right`
+            backgroundColor: "green",
+        }).showToast();
+
+        setTimeout(() => {
+
+        } , 4000);
+        closeModals();  
+        loadPlans(categoryName);
+    })
+    .catch(error => {
+        console.error("Error adding plan:", error);
+        Toastify({
+            text: "Failed to add plan. Please try again.",
+            duration: 3000,
+            gravity: "top", // `top`, `bottom`
+            position: "right", // `left`, `center`, `right`
+            backgroundColor: "red",
+        }).showToast();
+
+        setTimeout(() => {
+
+        } , 4000);
+    });
+}
+
+function getSelectedOTT() {
+    let ottOffers = [];
+    document.querySelectorAll("input[name='addOtt']:checked").forEach((checkbox) => {
+        ottOffers.push(checkbox.value);
+    });
+    return ottOffers.join(", "); 
+}
+
+function closeModals() {
+    document.getElementById("addModal").style.display = "none";
+    document.getElementById("addModalTopup").style.display = "none";
+    document.getElementById("addModalData").style.display = "none";
+    document.getElementById("addModalVoice").style.display = "none";
+
+    document.getElementById('editPlanId').value = "";
+
+        document.getElementById('editPlanId').value = "";
+        document.getElementById('editPlanPrice').value = "";
+        document.getElementById('editValidity').value = "";
+        document.getElementById('editDataPerDay').value = "";
+        document.getElementById('editSmsValidity').value = "";
+
+        document.getElementById('editNetflix').checked = false;
+        document.getElementById('editDisney').checked = false;
+        document.getElementById('editPrime').checked = false;
+
+}
+
+
+function fetchUsers() {
+    const token = localStorage.getItem("accessToken");
+    fetch('http://localhost:8080/api/admin/currentPlan/expiring',{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+        }) 
+        .then(response => response.json())
+        .then(users => {
+            const tableBody = document.getElementById("user-table-expiry").querySelector("tbody");
+            tableBody.innerHTML = "";
+
+            users.forEach(userdetails => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <tr>
+                        <th>${userdetails.userId}</th>
+                        <th>${userdetails.username}</th>
+                        <th>${userdetails.userEmail}</th>
+                        <th>${userdetails.phoneNumber}</th>
+                        <th><span class="status status-warning">Expires in 3 days</span></th>
+                                        <button class="save-btn" onclick="sentEmail('${userdetails.userEmail}', '${userdetails.username}')">Notify</button></th>
+                    </tr>
+                `;
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => console.error("Error fetching users:", error.errorMessage));
+        initializePagination("user-table-expiry", "pagination-container-expiry");
+
+}
+
+
+async function sentEmail(useremail , username){
+
+    const payload = {
+        email: useremail,
+        name: username
+    };
+
+    let token = localStorage.getItem("accessToken");
+
+    let response  = await fetch("http://localhost:8080/api/admin/notify/sendEmail", {
+        method: "POST",
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+    });
+
+    if(!response.ok){
+
+    }
+    else{
+        Toastify({
+                text: "Email sent successfully",
+                duration: 3000,  // Toast visible for 3 seconds
+                gravity: "top",
+                position: "right",
+                backgroundColor: "green",
+            }).showToast();
+
+            setTimeout(() => {
+
+            }, 3000); 
+    }
+    
+}
+
+
+
+function fetchUser() {
+    const token = localStorage.getItem("accessToken");
+        fetch("http://localhost:8080/api/admin",{
+            method:"GET",
+            headers : {
+                "Authorization" : `Bearer ${token}`
+            }
+        })
+            .then(response => response.json())
+            .then(users => {
+                const userTableBody = document.getElementById("user-table").querySelector("tbody");
+                userTableBody.innerHTML = "";
+
+                users.forEach(user => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${user.userId}</td>
+                        <td>${user.userFname} ${user.userLname}</td>
+                        <td>${user.userEmail}</td>
+                        <td>${user.userPhonenumber}</td>
+                        <td>${user.userAlternatePhonenumber}</td>
+                        <td>${user.userDateOfBirth}</td>
+                        <td>${user.userAddress}, ${user.userDistrict}, ${user.userState}, ${user.userPincode}</td>
+                        <td><button class="${getStatusClass(user.userAccountStatus)}">${user.userAccountStatus.toLowerCase()}</button></td>
+                        <td>
+                            <button class="tooltip">
+                                <span class="material-icons" onclick="openedituserModal(${user.userId})">edit</span>
+                                <span class="tooltip-text">Edit</span>
+                            </button>
+                            <button class="tooltip">
+                                <span class="material-icons" onclick="showDeleteUserModal(${user.userId})">delete</span>
+                                <span class="tooltip-text">Make Inactive</span>
+                            </button>
+                        </td>
+                    `;
+                    userTableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error("Error fetching users:", error));
+
+            initializePagination("user-table", "pagination-container-user");
+
+    }
+
+    function getStatusClass(status) {
+        switch (status) {
+            case "ACTIVE": return "activeClass";
+            case "INACTIVE": return "inactiveClass";
+            case "SUSPENDED": return "suspendedClass";
+            default: return "";
+        }
+    }
+
+    let userIdToDelete = null; // Store the user ID
+
+function showDeleteUserModal(userId) {
+    userIdToDelete = userId;
+    document.getElementById("deleteUserModal").style.display = "block";
+}
+
+document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+    const token = localStorage.getItem("accessToken");
+    if (userIdToDelete) {
+    fetch(`http://localhost:8080/api/admin/changeStatus/${userIdToDelete}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+
+        },
+        body: JSON.stringify()
+    })
+    .then(response => {
+        if (response.ok) {
+            fetchUser(); 
+        } else {
+            alert("Error updating user status.");
+        }
+    })
+    .catch(error => console.error("Error updating user status:", error))
+    .finally(() => {
+        closeDeleteUserModal();
+    });
+}
+
+});
+
+document.getElementById("cancelDeleteBtn").addEventListener("click", function () {
+    closeDeleteUserModal();
+});
+
+function closeDeleteUserModal() {
+    document.getElementById("deleteUserModal").style.display = "none";
+    userIdToDelete = null;
+}
+
+async function fetchTransactions() {
+    const token = localStorage.getItem("accessToken");
+    try {
+        const response = await fetch('http://localhost:8080/api/admin/transactions',{
+            method:"GET",
+            headers : {
+                "Authorization" : `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const transactions = await response.json();
+        const tableBody = document.getElementById("transaction-body");
+
+        if (!tableBody) {
+            console.error("Table body not found!");
+            return;
+        }
+
+        tableBody.innerHTML = ""; // Clear old data
+
+        transactions.forEach(transaction => {
+            const row = document.createElement("tr");
+
+            const formattedDate = transaction.transactionDate 
+                ? new Date(transaction.transactionDate).toLocaleString() 
+                : "N/A";
+
+            row.innerHTML = `
+                <td>${transaction.transactionId}</td>
+                <td>${transaction.user?.userId ?? "N/A"}</td>
+                <td>${transaction.user?.userFname ?? "N/A"} ${transaction.user?.userLname ?? ""}</td>
+                <td>${transaction.user?.userEmail ?? "N/A"}</td>
+                <td>${transaction.user?.userPhonenumber ?? "N/A"}</td>
+                <td>${transaction.plan?.planId ?? "N/A"}</td>
+                <td>${transaction.plan?.planPrice ? `₹${transaction.plan.planPrice}` : "N/A"}</td>
+                <td>${transaction.transactionMode}</td>
+                <td><button class="${transaction.transactionStatus === "success" ? "TSClass" 
+         : transaction.transactionStatus === "pending" ? "TPClass" 
+         : transaction.transactionStatus === "failure" ? "TFClass" 
+         : ""}">${transaction.transactionStatus}</button></td>
+                <td>${formattedDate}</td>
+            `;
+
+            tableBody.appendChild(row);
+        });
+        await initializePagination("history-table", "pagination-container-history");
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+    }
+}
+ 
+
+
+</script>
+
+</html>

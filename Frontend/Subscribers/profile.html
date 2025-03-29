@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../Images/favicon.jpg"> 
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #006666;
+            --primary-light: #b3f1f0;
+            --primary-dark: #005252;
+            --accent-color: #ff9900;
+            --text-dark: #333333;
+            --text-light: #ffffff;
+            --border-radius: 8px;
+            --box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    overflow: hidden;
+    width: 150px;
+    margin-top: 12px;
+
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+    border-bottom: 1px solid #ddd;
+}
+
+.dropdown-menu a:hover {
+    background: #f1f1f1;
+}
+
+.dropdown-menu a:last-child {
+    border-bottom: none;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+}
+       
+        .header {
+            display: flex;
+            position: fixed;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--primary-color);
+            padding: 0.7rem 2rem;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            height: 40px;
+            margin-right: 1.5rem;
+        }
+        
+        .header-nav ul {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+        }
+        
+        .header-nav li {
+            margin: 0 0.5rem;
+            position: relative;
+        }
+        
+        .header-nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .header-nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-light);
+        }
+        
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            padding-top: 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-light);
+        }
+        
+        .profile-section {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .profile-photo-container {
+            position: relative;
+        }
+        
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+        }
+        
+        .profile-details {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .profile-name {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--primary-dark);
+        }
+        
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .info-item i {
+            color: var(--primary-color);
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 24px;
+            background: #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 15px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 0.5s ease;
+        }
+        
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+        
+        .transaction-table th, .transaction-table td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        .transaction-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+        }
+        
+        .transaction-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .transaction-table tr:hover {
+            background-color: #e2f3f3;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-failed {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .payment-mode {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .payment-icon {
+            font-size: 1.2rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            margin: 5% auto;
+            border-radius: var(--border-radius);
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.3);
+            max-height: 80vh; 
+            overflow-y: auto; 
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .close-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            color: var(--text-dark);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 102, 102, 0.1);
+        }
+        
+        .save-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .save-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .tab-container {
+            display: flex;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .invoice-action {
+            display: flex;
+            gap: 10px;
+        }
+        
+.pagination-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+.pagination-btn {
+    margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  min-width: 40px;
+  text-align: center;
+}
+.pagination-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.pagination-btn.active {
+  background-color: #0056b3;
+  font-weight: bold;
+}
+.pagination-info {
+  text-align: center;
+  margin-top: 10px;
+  color: #666;
+  font-size: 0.9em;
+}
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 0.5rem 1rem;
+            }
+            
+            .header-nav ul {
+                gap: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .profile-section {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .profile-photo {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .profile-details {
+                text-align: center;
+            }
+            
+            .button-group {
+                justify-content: center;
+            }
+            
+            .transaction-table {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <img src="../Images/logo2-removebg-preview.png" alt="Tech Mahindra Logo" class="logo">
+        </div>
+        <nav class="header-nav">
+            <ul>
+                <li><a href="page1.html" id="back">Home</a></li>
+                <li><a href="fivegplans.html?status=true"> True 5G</a></li>
+                <li><a href="page2.html?status=true"> Plans</a></li>
+                <li><a href="support.html?status=true"> Support</a></li>
+                <li>
+                    <div>
+                        <img style="cursor:pointer; margin-top: 1px;" src="../Images/user.png" onclick="toggleDropdown()" alt="" height="25">
+                        <div id="dropdownMenu" class="dropdown-menu">
+                         <a href="" style="color:black">My Account</a>
+                         <a href="" style="color: black;" onclick="logout(this)">Logout</a>
+                        </div>
+                     </div>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    
+    <div class="dashboard-container">
+
+        <div class="card">
+            <h2 class="section-title">My Profile</h2>
+            <div class="profile-section">
+                <div class="profile-photo-container">
+                    <img src="../Images/bg1.png" alt="Profile Picture" class="profile-photo">
+                </div>
+                <div class="profile-details">
+                    <h2 class="profile-name" id="name"></h2>
+                    <div class="profile-info">
+                        <div>
+                            <div class="info-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>Email: <span id="email"></span></span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-phone"></i>
+                                <span>Phone: <span id="phonenumber"></span></span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-phone-alt"></i>
+                                <span>Alternate Phone: <span id="altphonenumber"></span></span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="info-item">
+                                <i class="fas fa-birthday-cake"></i>
+                                <span>Date of Birth: <span id="dob"></span></span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Address: <span id="address"></span></span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-user-shield"></i>
+                                <span>Account Status:<span id="status"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn" onclick="openModal()">
+                            <i class="fas fa-user-edit"></i> Edit Profile
+                        </button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" >
+            <h2 class="section-title">Current Plan</h2>
+            <div id="currentPlandetails">
+            <p><strong>Plan Price : </strong> ₹<span id="planPrice"></span> / month</p>
+            <p><strong>Validity : </strong> <span id="planValidity"></span> Days (<span id="planData"></span> GB / Day)</p>
+            <p><strong>Plan Expiry Date : </strong> <span id="planExpiry"> </span></p>
+            
+            <h3 style="margin-top: 20px;">Data Usage</h3>
+            <p>Data Remaining : <strong><span id="dataRemaining"></span> MB</strong></p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width:0%;"></div>
+            </div>
+        </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Transaction History</h2>
+            <table class="transaction-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Transaction ID</th>
+                        <th>Plan</th>
+                        <th>Amount</th>
+                        <th>Payment Mode</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="transaction-body">
+                   
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit Profile</h2>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="modalFname">First Name</label>
+                    <input type="text" id="modalFname" class="input-field">
+                </div>
+    
+                <div class="form-group">
+                    <label for="modalLname">Last Name</label>
+                    <input type="text" id="modalLname" class="input-field">
+                </div>
+            </div>
+    
+            <div class="form-group">
+                <label for="modalEmail">Email</label>
+                <input type="email" id="modalEmail" class="input-field">
+            </div>
+    
+            <div class="form-group">
+                <label for="modalPhone">Phone Number</label>
+                <input type="tel" id="modalPhone" class="input-field" disabled>
+            </div>
+
+            <div class="form-group">
+                <label for="modalPhone">Alternate Phone Number</label>
+                <input type="tel" id="modalAlternatePhone" class="input-field">
+            </div>
+    
+            <div class="form-group">
+                <label for="modalDob">Date of Birth</label>
+                <input type="date" id="modalDob" class="input-field">
+            </div>
+    
+            <div class="form-group">
+                <label for="modalAddress">Address</label>
+                <input type="text" id="modalAddress" class="input-field">
+            </div>
+    
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="modalState">State</label>
+                    <input type="text" id="modalState" class="input-field">
+                </div>
+    
+                <div class="form-group">
+                    <label for="modalDistrict">District</label>
+                    <input type="text" id="modalDistrict" class="input-field">
+                </div>
+    
+                <div class="form-group">
+                    <label for="modalPincode">Pincode</label>
+                    <input type="text" id="modalPincode" class="input-field">
+                </div>
+            </div>
+            
+            <button class="save-btn" onclick="saveProfileChanges()">Save Changes</button>
+        </div>
+    </div>
+    
+    
+    
+    <script>
+    const phoneNumber = localStorage.getItem("phonenumber");
+    let userid;
+    window.onload = function () {
+        fetchUserDetails();
+    }
+
+    function toggleDropdown() {
+
+  var dropdown = document.getElementById("dropdownMenu");
+  dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+
+}
+async function logout(clicked) {
+    let confirmLogout = confirm("Are you sure you want to log out?");
+    if (!confirmLogout) return; // If the user cancels, do nothing
+
+    let token = localStorage.getItem("accessToken");
+    let refreshtoken = localStorage.getItem("refreshToken");
+
+    if (!token) {
+        alert("User is not logged in.");
+        return;
+    }
+
+    let tokens = { refreshToken: refreshtoken };
+
+    try {
+        const response = await fetch("http://localhost:8080/auth/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(tokens) // Prevent null issues
+        });
+
+        console.log(response);
+
+        if (!response.ok) {
+            alert("Logout failed. Please try again.");
+        } else {
+            // Clear tokens
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+
+            // Show toast message
+            Toastify({
+                text: "Logged out Successfully",
+                duration: 3000,  // Toast visible for 3 seconds
+                gravity: "top",
+                position: "right",
+                backgroundColor: "green",
+            }).showToast();
+
+            // Delay navigation until toast is finished
+            setTimeout(() => {
+                window.location.href = "page1.html"; 
+            }, 3000); // Wait for the toast to finish before redirecting
+        }
+    } catch (error) {
+        console.error( error.message);
+        alert("Something went wrong. Try again.");
+    }
+}
+
+
+    async function fetchCurrentPlan(userId) {
+        const token = localStorage.getItem("accessToken");
+
+    try {
+        let response = await fetch(`http://localhost:8080/api/both/currentPlan/${userId}`,{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+            });
+        if (!response.ok) {
+
+            document.getElementById("currentPlandetails").textContent = "No Current Plan Details Found"
+
+        }
+        let data = await response.json();
+     
+        
+        document.getElementById("planPrice").textContent = data.currentPlanPrice;
+        document.getElementById("planValidity").textContent = data.validity;
+        document.getElementById("planData").textContent = data.data/data.validity;
+        document.getElementById("planExpiry").textContent = data.planExpiryDate;
+        
+        let usage = calculateUsage() ;
+        let remainingData =(((100 - usage )/100) * (1024) ).toFixed(2);
+        document.getElementById("dataRemaining").textContent = (remainingData); 
+        
+        let usagePercentage = ((remainingData / data.data) * 100).toFixed(1);    
+        document.getElementById("progressFill").style.width = usage+ "%";
+        document.getElementById("progressFill").textContent = usage + "% Used";
+        
+    } catch (error) {
+        console.error("Error fetching current plan:", error);
+    }
+}
+
+function calculateUsage(){
+    let now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let seconds = now.getSeconds();
+
+    let sum = hours + minutes + seconds;
+    let percentage = ((sum / 141) * 100).toFixed(2); 
+    return percentage;
+}
+async function fetchUserDetails(){
+    if (!phoneNumber) {
+        console.error("phonenumber not found in");
+        return;
+    }
+    const token = localStorage.getItem("accessToken");
+
+    await fetch(`http://localhost:8080/api/customer/phone/${phoneNumber}`,{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+            })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch user details.");
+            }
+            return response.json();
+        })
+        .then(user => {
+            userid=user.userId;
+            document.getElementById("phonenumber").textContent = user.userPhonenumber;
+            document.getElementById("name").textContent = `${user.userFname} ${user.userLname}`;
+            document.getElementById("email").textContent = user.userEmail;
+            document.getElementById("altphonenumber").textContent = user.userAlternatePhonenumber;
+            document.getElementById("dob").textContent = user.userDateOfBirth;
+            document.getElementById("address").textContent = `${user.userAddress} ${user.userDistrict} ${user.userState} ${user.userPincode}`;
+            document.getElementById("status").innerHTML = user.userAccountStatus == "ACTIVE" ?  "<span style='color: green; font-weight: bold;'>Active</span>" :  "<span style='color: orange; font-weight: bold;'>Inactive</span>";
+        }) 
+        .catch(error => {
+            console.error("Error fetching user details:", error);
+        });
+        fetchCurrentPlan(userid);
+
+        fetchUserTransactions(userid);
+
+};
+
+// Function to open the modal and fetch user details
+function openModal() {
+    const token = localStorage.getItem("accessToken");
+
+    fetch(`http://localhost:8080/api/customer/phone/${phoneNumber}`,{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+            })
+        .then(response => response.json())
+        .then(user => {
+            document.getElementById("modalFname").value = user.userFname;
+            document.getElementById("modalLname").value = user.userLname;
+            document.getElementById("modalEmail").value = user.userEmail;
+            document.getElementById("modalPhone").value = user.userPhonenumber;
+            document.getElementById("modalAlternatePhone").value =  user.userAlternatePhonenumber;
+            document.getElementById("modalDob").value = user.userDateOfBirth;
+            document.getElementById("modalAddress").value = user.userAddress;
+            document.getElementById("modalState").value = user.userState;
+            document.getElementById("modalDistrict").value = user.userDistrict;
+            document.getElementById("modalPincode").value = user.userPincode;
+
+            document.getElementById("profileModal").style.display = "block";
+        })
+        .catch(error => console.error("Error fetching user details:", error));
+}
+
+// Function to close the modal
+function closeModal() {
+    document.getElementById("profileModal").style.display = "none";
+}
+
+// Function to save profile changes
+function saveProfileChanges() {
+
+    const updatedUser = {
+        userFname: document.getElementById("modalFname").value,
+        userLname: document.getElementById("modalLname").value,
+        userEmail: document.getElementById("modalEmail").value,
+        userPhonenumber: document.getElementById("modalPhone").value,
+        userAlternatePhonenumber : document.getElementById("modalAlternatePhone").value,
+        userDateOfBirth: document.getElementById("modalDob").value,
+        userAddress: document.getElementById("modalAddress").value,
+        userState: document.getElementById("modalState").value,
+        userDistrict: document.getElementById("modalDistrict").value,
+        userPincode: document.getElementById("modalPincode").value
+    };
+
+    const token = localStorage.getItem("accessToken");
+
+    fetch(`http://localhost:8080/api/both/${userid}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization" : `Bearer ${token}`
+
+        },
+        body: JSON.stringify(updatedUser)
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        Toastify({
+            text: "Profile Updated Successfully",
+            duration: 3000,
+            gravity: "top", // `top`, `bottom`
+            position: "right", // `left`, `center`, `right`
+            backgroundColor: "green",
+        }).showToast();
+
+        setTimeout(() =>{
+
+        } , 4000);
+
+        closeModal('profileModal');
+        fetchUserDetails(); // Refresh the profile display after update
+    })
+    .catch(error => console.error("Error updating profile:", error));
+}
+async function downloadInvoice(transactionId) {
+    const token = localStorage.getItem("accessToken");
+
+    try {
+        // Fetch transaction details from API
+        const response = await fetch(`http://localhost:8080/api/customer/transactions/${transactionId}` ,{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+            });
+        if (!response.ok) {
+            throw new Error(`Error fetching transaction: ${response.statusText}`);
+        }
+        const transactionDetails = await response.json();
+
+        // Import jsPDF
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Invoice Title
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        doc.text("Invoice", 85, 20);
+
+        // Company Details
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "normal");
+        doc.text("MobiComm", 10, 35);
+        doc.text("123, Main Road, Chennai, India", 10, 42);
+
+        // Separator Line
+        doc.line(10, 55, 200, 55);
+
+        // Transaction Details
+        doc.setFont("helvetica", "bold");
+        doc.text("Transaction Details", 10, 65);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Transaction ID: ${transactionDetails.transactionId}`, 10, 75);
+        doc.text(`Invoice Date: ${transactionDetails.transactionDate}`, 10, 85);
+
+        doc.line(10, 90, 200, 90);
+
+        // Customer Details
+        doc.setFont("helvetica", "bold");
+        doc.text("Customer Details", 10, 100);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Name: ${transactionDetails.user?.userFname} ${transactionDetails.user?.userLname}`, 10, 110);
+        doc.text(`Email: ${transactionDetails.user?.userEmail}`, 10, 120);
+        doc.text(`Phone: ${transactionDetails.user?.userPhonenumber}`, 10, 130);
+
+        doc.line(10, 135, 200, 135);
+
+        // Plan & Payment Details
+        const startY = 145;
+        doc.setFont("helvetica", "bold");
+        doc.text("Plan & Payment Details", 10, startY);
+
+        // Table Data
+
+// Set starting position
+let yPosition = startY + 10;
+doc.setFont("helvetica", "normal");
+
+// Add Plan & Payment Details one by one
+doc.text("Plan Id:", 10, yPosition);
+doc.text(transactionDetails.plan?.planId + "" || "N/A", 70, yPosition);
+yPosition += 10;
+
+doc.text("Amount Paid (in rupees):", 10, yPosition);
+doc.text(transactionDetails.plan?.planPrice.toString(), 70, yPosition);
+yPosition += 10;
+
+doc.text("Status:", 10, yPosition);
+doc.setTextColor(0, 128, 0); 
+doc.setFont("helvetica", "bold");
+doc.text(transactionDetails.transactionStatus || "N/A", 70, yPosition);
+yPosition += 10;
+doc.setTextColor(0, 0, 0); // Reset to default color (black)
+doc.setFont("helvetica", "normal");
+
+
+doc.text("Payment Mode:", 10, yPosition);
+doc.text(transactionDetails.transactionMode || "N/A", 70, yPosition);
+
+
+        doc.line(10, 200, 200, 200);
+
+        // Footer Message (Green Text)
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(0, 128, 0); // Green color (RGB: 0, 128, 0)
+        doc.text("Thank you for choosing our service!", 50, yPosition + 25);
+
+        // Save as PDF
+        doc.save(`Invoice_${transactionDetails.transactionId}.pdf`);
+    } catch (error) {
+        console.error("Error generating invoice:", error.message);
+        Toastify({
+            text: "Failed to generate invoice. Please try again.",
+            duration: 3000,
+            gravity: "top", // `top`, `bottom`
+            position: "right", // `left`, `center`, `right`
+            backgroundColor: "red",
+        }).showToast();
+    }
+}
+
+
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = "none";
+            }
+        };
+
+
+async function fetchUserTransactions(userId) {
+    const token = localStorage.getItem("accessToken");
+
+    try {
+        const response = await fetch(`http://localhost:8080/api/customer/transactions/user/${userId}`,{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+            });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const transactions = await response.json();
+        const tableBody = document.getElementById("transaction-body");
+
+        if (!tableBody) {
+            console.error("Table body not found!");
+            return;
+        }
+
+        tableBody.innerHTML = ""; 
+
+        transactions.forEach(transaction => {
+            const row = document.createElement("tr");
+
+            // Format date
+            const formattedDate = transaction.transactionDate 
+                ? new Date(transaction.transactionDate).toLocaleString() 
+                : "N/A";
+
+            // Get Payment Mode Icon
+            const paymentModeIcon = getPaymentModeIcon(transaction.transactionMode);
+
+            // Get Status Badge Class
+            const statusBadgeClass = getStatusClass(transaction.transactionStatus);
+
+            // Create Table Row
+            row.innerHTML = `
+                <td>${formattedDate}</td>
+                <td>${transaction.transactionId}</td>
+                <td>${transaction.plan?.planId ?? "N/A"}</td>
+                <td>₹${transaction.plan?.planPrice ?? "N/A"}</td>
+                <td>
+                    <div class="payment-mode">
+                        <i class="${paymentModeIcon} payment-icon"></i> 
+                        ${transaction.transactionMode}
+                    </div>
+                </td>
+                <td><span class="status-badge ${statusBadgeClass}">${transaction.transactionStatus}</span></td>
+                <td>
+                    <div class="invoice-action">
+                        <button class="btn ${transaction.transactionStatus === 'success' ? '' : 'btn-secondary'}" 
+                                ${transaction.transactionStatus === 'success' ? `onclick="downloadInvoice(${transaction.transactionId})"` : 'disabled'}>
+                            <i class="fas ${transaction.transactionStatus === 'success' ? 'fa-download' : 'fa-clock'}"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+
+            tableBody.appendChild(row);
+        });
+
+
+        initializePagination("transaction-table", "pagination-container-history");
+
+
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+    }
+}
+
+// Function to get appropriate payment mode icon
+function getPaymentModeIcon(mode) {
+    switch (mode.toLowerCase()) {
+        case "google pay": return "fab fa-google-pay";
+        case "credit/debit card": return "fas fa-credit-card";
+        case "upi": return "fas fa-mobile-alt";
+        default: return "fas fa-money-bill-wave";
+    }
+}
+
+// Function to get status badge class
+function getStatusClass(status) {
+    return status === "success" ? "status-success" 
+         : status === "pending" ? "status-pending" 
+         : status === "failure" ? "status-failure" 
+         : "";
+}
+async function initializePagination(tableId, containerClass) {
+    const rowsPerPage = 5;
+    const table = document.getElementsByClassName(tableId)[0];
+    if (!table) return;
+
+    const tbody = table.querySelector("tbody");
+    const rows = Array.from(tbody.getElementsByTagName("tr"));
+    const totalPages = Math.ceil(rows.length / rowsPerPage);
+    let currentPage = 1;
+    const maxVisiblePages = 5; // Limit visible page numbers
+
+    if (totalPages === 0) return;
+
+    function displayPage(page) {
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        
+        rows.forEach((row, index) => {
+            row.style.display = index >= start && index < end ? "table-row" : "none";
+        });
+    }
+
+    function createPagination() {
+        const existingContainer = document.querySelector(`.${containerClass}`);
+        if (existingContainer) existingContainer.remove();
+
+        const paginationContainer = document.createElement("div");
+        paginationContainer.className = containerClass;
+
+        const paginationControls = document.createElement("div");
+        paginationControls.className = "pagination-controls";
+
+        // Previous Button
+        const prevButton = createButton("Previous", () => changePage(currentPage - 1));
+        prevButton.id = `${containerClass}-prev`;
+        paginationControls.appendChild(prevButton);
+
+        // Page Numbers (Initially Limited)
+        const pageNumberContainer = document.createElement("div");
+        pageNumberContainer.className = "page-number-container";
+        paginationControls.appendChild(pageNumberContainer);
+
+        // Next Button
+        const nextButton = createButton("Next", () => changePage(currentPage + 1));
+        nextButton.id = `${containerClass}-next`;
+        paginationControls.appendChild(nextButton);
+
+        // Page Info
+        const pageInfoDiv = document.createElement("div");
+        pageInfoDiv.className = "pagination-info";
+        paginationContainer.appendChild(paginationControls);
+        paginationContainer.appendChild(pageInfoDiv);
+
+        table.parentElement.appendChild(paginationContainer);
+        updatePagination();
+    }
+
+    function createButton(text, onClick) {
+        const button = document.createElement("button");
+        button.innerText = text;
+        button.className = "pagination-btn";
+        button.onclick = onClick;
+        return button;
+    }
+
+    function updatePagination() {
+        const pageNumberContainer = document.querySelector(`.${containerClass} .page-number-container`);
+        pageNumberContainer.innerHTML = "";
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const numberBtn = createButton(i, () => changePage(i));
+            numberBtn.dataset.page = i;
+            numberBtn.classList.toggle("active", i === currentPage);
+            pageNumberContainer.appendChild(numberBtn);
+        }
+
+        // Update page info
+        const pageInfo = document.querySelector(`.${containerClass} .pagination-info`);
+        if (pageInfo) pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
+
+        // Enable/Disable Previous & Next buttons
+        document.getElementById(`${containerClass}-prev`).disabled = currentPage === 1;
+        document.getElementById(`${containerClass}-next`).disabled = currentPage === totalPages;
+    }
+
+    function changePage(page) {
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        displayPage(currentPage);
+        updatePagination();
+    }
+
+    displayPage(currentPage);
+    createPagination();
+}
+
+
+    </script>
+</body>
+</html>
