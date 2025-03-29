@@ -535,7 +535,7 @@ async function moveNext() {
         }
 
 
-        window.location.href = pageStatus ? "fivegplans.html?status=true" : "page2.html?status=true";
+        window.location.href = pageStatus ? "fivegplans.html?status=true" : "plans.html?status=true";
 
     } catch (error) {
         console.error("Error during transaction processing:", error);
@@ -591,7 +591,7 @@ async function closePaymentModal() {
   const params = new URLSearchParams(window.location.search);
 
 var pageStatus = params.get('target') === '5g'; 
-window.location.href = pageStatus ? "fivegplans.html?status=true":"page2.html?status=true";
+window.location.href = pageStatus ? "fivegplans.html?status=true":"plans.html?status=true";
 }
 
 const Pcheckboxes = document.querySelectorAll(".upi");

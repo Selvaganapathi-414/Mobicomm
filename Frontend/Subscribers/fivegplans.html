@@ -227,7 +227,7 @@
         </div>
         <nav class="header-nav">
             <ul>
-                <li><a href="page1.html">Home</a></li>
+                <li><a href="index.html">Home</a></li>
                 <li><a href="" style="text-decoration: underline;">True 5G</a></li>
                 <li><a href="" id="plansid">Plans</a></li>
                 <li><a href="" id="supportid">Support</a></li>
@@ -349,17 +349,17 @@ function generateOTTIcons(ottPlans) {
 
         if (status === "false") {
             document.getElementById("classImage").style.display = 'none';
-            document.getElementById("plansid").href = "page2.html?status=false";
+            document.getElementById("plansid").href = "plans.html?status=false";
             document.getElementById("supportid").href = "support.html?status=false";
         } else {
-            document.getElementById("plansid").href = "page2.html?status=true";
+            document.getElementById("plansid").href = "plans.html?status=true";
             document.getElementById("supportid").href = "support.html?status=true";
         }
 
         function payment(val) {
             
                     if (status == 'false') {
-                        window.location.href = "page1.html";
+                        window.location.href = "index.html";
                     } else {
                         localStorage.setItem('price', val);
                         startPayment();
