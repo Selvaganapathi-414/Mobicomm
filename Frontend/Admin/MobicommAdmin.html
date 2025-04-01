@@ -21,9 +21,13 @@
             <img src="../Images/logo2-removebg-preview.png" alt="MobiComm Logo" height="40px">
         </div>
 
-        <div style="display: flex; align-items: center;">
-            <img src="../Images/user.png" alt="User Icon" height="35px" style="padding-right: 20px;">
-        </div>
+        <div>
+            <img style="cursor:pointer; margin-top: 10px;" src="../Images/user.png"  onclick = "toggleDropdown1()" alt="" height="35">
+            <div id="dropdownMenu" class="dropdown-menu">
+             <a href="" id="account" style="color:black; font-weight: bold;" >My Account</a>
+             <a href="" style="color:black" onclick="logout()">Logout</a>
+            </div>
+         </div>
     </header>
 
     <div class="main-container">
@@ -647,6 +651,66 @@
 
 </body>
 <script>
+
+async function logout(clicked) {
+    let confirmLogout = confirm("Are you sure you want to log out?");
+    if (!confirmLogout) return; // If the user cancels, do nothing
+
+    let token = localStorage.getItem("accessToken");
+    let refreshtoken = localStorage.getItem("refreshToken");
+
+    if (!token) {
+        alert("User is not logged in.");
+        return;
+    }
+
+    let tokens = { refreshToken: refreshtoken };
+
+    try {
+        const response = await fetch("http://localhost:8080/auth/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(tokens) // Prevent null issues
+        });
+
+        console.log(response);
+
+        if (!response.ok) {
+            alert("Logout failed. Please try again.");
+        } else {
+            // Clear tokens
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+
+            // Show toast message
+            Toastify({
+                text: "Logged out Successfully",
+                duration: 3000,  // Toast visible for 3 seconds
+                gravity: "top",
+                position: "right",
+                backgroundColor: "green",
+            }).showToast();
+
+            // Delay navigation until toast is finished
+            setTimeout(() => {
+                window.location.href = "adminLogin.html"; 
+            }, 3000); // Wait for the toast to finish before redirecting
+        }
+    } catch (error) {
+        console.error( error.message);
+        alert("Something went wrong. Try again.");
+    }
+}
+
+function toggleDropdown1() {
+    
+    var dropdown = document.getElementById("dropdownMenu");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+  
+  }
 
 async function openDeleteCategoryModal() {
     let categoryList = document.getElementById("categoryList");
@@ -1349,6 +1413,9 @@ function closeedituserModal() {
     document.getElementById("usereditModal").style.display = "none";
 }
 
+document.getElementById("account").addEventListener("click", function(event) {
+    this.href = "adminProfile.html";
+    });
 function saveedituserChanges() {
     const userId = document.getElementById("modalUserId").value;
     const firstName = document.getElementById("modalFname").value;

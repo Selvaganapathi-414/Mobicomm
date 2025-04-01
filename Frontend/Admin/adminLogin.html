@@ -183,6 +183,7 @@
         const data = await response.json();
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
+        localStorage.setItem('adminusername' , username);
 
         loginMessage.style.color = "green";
             // loginMessage.textContent = "Login successful!";
@@ -197,7 +198,7 @@
 
             setTimeout(() => {
                 window.location.href = "MobicommAdmin.html";
-            }, 4000);
+            }, 3000);
         } 
     
     catch (error) {

@@ -379,7 +379,7 @@
                          <a href="" style="color: black;" onclick="logout(this)">Logout</a>
                         </div>
                      </div>
-                </li>
+                
             </ul>
         </nav>
     </div>
@@ -419,15 +419,19 @@
                                 <i class="fas fa-map-marker-alt"></i>
                                 <span>Address: <span id="address"></span></span>
                             </div>
-                            <div class="info-item">
-                                <i class="fas fa-user-shield"></i>
-                                <span>Account Status:<span id="status"></span></span>
-                            </div>
+                            
                         </div>
                     </div>
                     <div class="button-group">
                         <button class="btn" onclick="openModal()">
                             <i class="fas fa-user-edit"></i> Edit Profile
+                        </button>
+                        
+                    </div>
+
+                    <div class="button-group"></div>
+                        <button class="btn" onclick="openchangePasswordModal()">
+                            <i class="fas fa-user-edit"></i> Change Password
                         </button>
                         
                     </div>
@@ -499,9 +503,137 @@
                 <button class="save-btn" onclick="saveProfileChanges()">Save Changes</button>
             </div>
         </div>
+
+
+        <div id="openchangePasswordModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Change Password</h2>
+                    <span class="close-btn" onclick="closeModal()">&times;</span>
+                </div>
+                
+                    <div class="form-group">
+                        <label for="oldPassword">Old Password</label>
+                        <input type="password" id="oldPassword" class="input-field">
+                    </div>
+                    <span id="omismatcherror" style="color: red; font-size: 10px;"></span>
+
+        
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" class="input-field">
+                    </div>
+                    <span id="nmismatcherror" style="color: red; font-size: 10px;"></span>
+
+                
+        
+                <div class="form-group">
+                    <label for="cPassword">Confirm Password</label>
+                    <input type="password" id="cPassword" class="input-field">
+                </div>
+                <span id="cmismatcherror" style="color: red; font-size: 10px;"></span>
+                
+                <button class="save-btn" onclick="changePassword()">Change Password</button>
+            </div>
+        </div>
         <script>
-        const phoneNumber = localStorage.getItem("phonenumber");
-        let userid;
+
+            function openchangePasswordModal(){
+                document.getElementById("openchangePasswordModal").style.display = "block"
+            }
+
+    async function changePassword(){
+        let status = true;
+                let oldPassword = document.getElementById("oldPassword").value.trim();
+                let newPassword = document.getElementById("newPassword").value.trim();
+                let confirmPassword = document.getElementById("cPassword").value.trim();
+
+                if(oldPassword.length == 0){
+                    status = false;
+                    document.getElementById("omismatcherror").textContent = "Old Password cannot be empty";
+
+                }
+                if(newPassword.length == 0){
+                    status = false;
+                    document.getElementById("nmismatcherror").textContent = "New Password cannot be empty";
+                }
+                if(confirmPassword.length == 0){
+                    status = false;
+                    document.getElementById("cmismatcherror").textContent = "Confirm Password cannot be empty";
+                }
+
+console.log(newPassword + " " + oldPassword + "  " + confirmPassword);
+                if(!(newPassword === confirmPassword)){
+                    status = false;
+                    document.getElementById("cmismatcherror").textContent = "New Password and Confirm password does not match";
+                }
+
+                let token = localStorage.getItem("accessToken");
+
+    if (!token) {
+        alert("User is not logged in.");
+        return;
+    }
+
+    let passwords;
+    if(status){
+
+    try {
+       let response = await fetch(`http://localhost:8080/api/admin/validPassword/${userid}/${oldPassword}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+        });
+
+        if(!response.ok){
+            status = false;
+            document.getElementById("omismatcherror").textContent = "Old Password does not match";
+        }
+
+        if(status){
+
+            passwords = {password : newPassword};
+
+            let response = await fetch(`http://localhost:8080/api/admin/changePassword/${userid}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(passwords) // Prevent null issues
+        });
+
+           if(response.ok){
+            document.getElementById("openchangePasswordModal").style.display = "none"
+
+            document.getElementById("oldPassword").value = "";
+            document.getElementById("newPassword").value  = "";
+            document.getElementById("cPassword").value = "";
+            document.getElementById("omismatcherror").textContent = "";
+            document.getElementById("nmismatcherror").textContent = "";
+            document.getElementById("cmismatcherror").textContent = "";
+
+            Toastify({
+                text: "Password changed Successfully",
+                duration: 3000,  // Toast visible for 3 seconds
+                gravity: "top",
+                position: "right",
+                backgroundColor: "green",
+            }).showToast();
+           }
+        }
+
+        }
+        catch(error){
+            alert("Something went wrong. Try again." + error);
+        }
+    }
+    }
+
+        const username = localStorage.getItem("adminusername");
+        let userid , phonenumber;
         window.onload = function () {
             fetchUserDetails();
         }
@@ -513,122 +645,186 @@
     
     }
     
-        function logout(clicked) {
-        var confirmLogout = confirm("Are you sure you want to log out?");
-        if (confirmLogout) {
-            clicked.href="adminLogin.html";
-        }
+   async function logout(clicked) {
+    let confirmLogout = confirm("Are you sure you want to log out?");
+    if (!confirmLogout) return; // If the user cancels, do nothing
+
+    let token = localStorage.getItem("accessToken");
+    let refreshtoken = localStorage.getItem("refreshToken");
+
+    if (!token) {
+        alert("User is not logged in.");
+        return;
     }
-        
-    
-    async function fetchUserDetails(){
-        if (!phoneNumber) {
-            console.error("phonenumber not found in");
-            return;
-        }
-    
-        await fetch(`http://localhost:8080/api/subscribers/phone/${phoneNumber}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch user details.");
-                }
-                return response.json();
-            })
-            .then(user => {
-                userid=user.userId;
-                document.getElementById("phonenumber").textContent = user.userPhonenumber;
-                document.getElementById("name").textContent = `${user.userFname} ${user.userLname}`;
-                document.getElementById("email").textContent = user.userEmail;
-                document.getElementById("altphonenumber").textContent = user.userAlternatePhonenumber;
-                document.getElementById("dob").textContent = user.userDateOfBirth;
-                document.getElementById("address").textContent = `${user.userAddress} ${user.userDistrict} ${user.userState} ${user.userPincode}`;
-                document.getElementById("status").innerHTML = user.userAccountStatus == "ACTIVE" ?  "<span style='color: green; font-weight: bold;'>Active</span>" :  "<span style='color: orange; font-weight: bold;'>Inactive</span>";
-            }) 
-            .catch(error => {
-                console.error("Error fetching user details:", error);
-            });
-            fetchCurrentPlan(userid);
-    
-            fetchUserTransactions(userid);
-    
-    };
-    
-    // Function to open the modal and fetch user details
-    function openModal() {
-        fetch(`http://localhost:8080/api/subscribers/phone/${phoneNumber}`)
-            .then(response => response.json())
-            .then(user => {
-                document.getElementById("modalFname").value = user.userFname;
-                document.getElementById("modalLname").value = user.userLname;
-                document.getElementById("modalEmail").value = user.userEmail;
-                document.getElementById("modalPhone").value = user.userPhonenumber;
-                document.getElementById("modalAlternatePhone").value =  user.userAlternatePhonenumber;
-                document.getElementById("modalDob").value = user.userDateOfBirth;
-                document.getElementById("modalAddress").value = user.userAddress;
-                document.getElementById("modalState").value = user.userState;
-                document.getElementById("modalDistrict").value = user.userDistrict;
-                document.getElementById("modalPincode").value = user.userPincode;
-    
-                document.getElementById("profileModal").style.display = "block";
-            })
-            .catch(error => console.error("Error fetching user details:", error));
-    }
-    
-    // Function to close the modal
-    function closeModal() {
-        document.getElementById("profileModal").style.display = "none";
-    }
-    
-    // Function to save profile changes
-    function saveProfileChanges() {
-    
-        const updatedUser = {
-            userFname: document.getElementById("modalFname").value,
-            userLname: document.getElementById("modalLname").value,
-            userEmail: document.getElementById("modalEmail").value,
-            userPhonenumber: document.getElementById("modalPhone").value,
-            userAlternatePhonenumber : document.getElementById("modalAlternatePhone").value,
-            userDateOfBirth: document.getElementById("modalDob").value,
-            userAddress: document.getElementById("modalAddress").value,
-            userState: document.getElementById("modalState").value,
-            userDistrict: document.getElementById("modalDistrict").value,
-            userPincode: document.getElementById("modalPincode").value
-        };
-    
-        fetch(`http://localhost:8080/api/subscribers/${userid}`, {
-            method: "PUT",
+
+    let tokens = { refreshToken: refreshtoken };
+
+    try{
+
+        const response = await fetch("http://localhost:8080/auth/logout", {
+            method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify(updatedUser)
-        })
-        .then(response => response.json())
-        .then(data => {
-    
+            body: JSON.stringify(tokens) // Prevent null issues
+        });
+
+        if (!response.ok) {
+            alert("Logout failed. Please try again.");
+        } else {
+            // Clear tokens
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+
+            // Show toast message
             Toastify({
-                text: "Profile Updated Successfully",
-                duration: 3000,
-                gravity: "top", // `top`, `bottom`
-                position: "right", // `left`, `center`, `right`
+                text: "Logged out Successfully",
+                duration: 3000,  // Toast visible for 3 seconds
+                gravity: "top",
+                position: "right",
                 backgroundColor: "green",
             }).showToast();
-    
-            setTimeout(() =>{
-    
-            } , 4000);
-    
-            closeModal('profileModal');
-            fetchUserDetails(); // Refresh the profile display after update
-        })
-        .catch(error => console.error("Error updating profile:", error));
+
+            // Delay navigation until toast is finished
+            setTimeout(() => {
+                window.location.href = "adminLogin.html"; 
+            }, 3000); // Wait for the toast to finish before redirecting
+        }
+    } catch (error) {
+        console.error( error.message);
+        alert("Something went wrong. Try again.");
     }
+}
+        
     
-      window.onclick = function(event) {
-                if (event.target.className === 'modal') {
-                    event.target.style.display = "none";
-                }
-            };
+async function fetchUserDetails(){
+    if (!username) {
+        console.error("phonenumber not found in");
+        return;
+    }
+    const token = localStorage.getItem("accessToken");
+
+    await fetch(`http://localhost:8080/api/admin/username/${username}`,{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+            })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch user details.");
+            }
+            return response.json();
+        })
+        .then(user => {
+            userid=user.userId;
+            document.getElementById("phonenumber").textContent = user.userPhonenumber;
+            document.getElementById("name").textContent = `${user.userFname} ${user.userLname}`;
+            document.getElementById("email").textContent = user.userEmail;
+            document.getElementById("altphonenumber").textContent = user.userAlternatePhonenumber;
+            document.getElementById("dob").textContent = user.userDateOfBirth;
+            document.getElementById("address").textContent = `${user.userAddress} ${user.userDistrict} ${user.userState} ${user.userPincode}`;
+            phonenumber =  user.userPhonenumber;
+            
+        }) 
+        .catch(error => {
+            console.error("Error fetching user details:", error);
+        });
+
+};
+
     
-        </script>
-    </body>
-    </html>
+function openModal() {
+    const token = localStorage.getItem("accessToken");
+
+    fetch(`http://localhost:8080/api/both/phone/${phonenumber}`,{
+            method:"GET",
+            headers : {
+                "Content-Type": "application/json",
+                "Authorization" : `Bearer ${token}`
+            }
+            })
+        .then(response => response.json())
+        .then(user => {
+            document.getElementById("modalFname").value = user.userFname;
+            document.getElementById("modalLname").value = user.userLname;
+            document.getElementById("modalEmail").value = user.userEmail;
+            document.getElementById("modalPhone").value = user.userPhonenumber;
+            document.getElementById("modalAlternatePhone").value =  user.userAlternatePhonenumber;
+            document.getElementById("modalDob").value = user.userDateOfBirth;
+            document.getElementById("modalAddress").value = user.userAddress;
+            document.getElementById("modalState").value = user.userState;
+            document.getElementById("modalDistrict").value = user.userDistrict;
+            document.getElementById("modalPincode").value = user.userPincode;
+
+            document.getElementById("profileModal").style.display = "block";
+        })
+        .catch(error => console.error("Error fetching user details:", error));
+}
+
+// Function to close the modal
+function closeModal() {
+    document.getElementById("profileModal").style.display = "none";
+    document.getElementById("openchangePasswordModal").style.display = "none";
+
+}
+
+// Function to save profile changes
+function saveProfileChanges() {
+
+    const updatedUser = {
+        userFname: document.getElementById("modalFname").value,
+        userLname: document.getElementById("modalLname").value,
+        userEmail: document.getElementById("modalEmail").value,
+        userPhonenumber: document.getElementById("modalPhone").value,
+        userAlternatePhonenumber : document.getElementById("modalAlternatePhone").value,
+        userDateOfBirth: document.getElementById("modalDob").value,
+        userAddress: document.getElementById("modalAddress").value,
+        userState: document.getElementById("modalState").value,
+        userDistrict: document.getElementById("modalDistrict").value,
+        userPincode: document.getElementById("modalPincode").value
+    };
+
+    const token = localStorage.getItem("accessToken");
+
+    fetch(`http://localhost:8080/api/both/${userid}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization" : `Bearer ${token}`
+
+        },
+        body: JSON.stringify(updatedUser)
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        Toastify({
+            text: "Profile Updated Successfully",
+            duration: 3000,
+            gravity: "top", // `top`, `bottom`
+            position: "right", // `left`, `center`, `right`
+            backgroundColor: "green",
+        }).showToast();
+
+        setTimeout(() =>{
+
+        } , 4000);
+
+        closeModal('profileModal');
+        fetchUserDetails(); // Refresh the profile display after update
+    })
+    .catch(error => console.error("Error updating profile:", error));
+}
+    
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = "none";
+            }
+        };
+    
+    </script>
+</body>
+</html>
