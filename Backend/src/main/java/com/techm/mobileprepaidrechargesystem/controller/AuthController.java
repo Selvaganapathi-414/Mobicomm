@@ -65,7 +65,6 @@ public class AuthController {
             userOptional = userRepository.findByUserPhonenumber(identifier);
             if (userOptional.isPresent()) {
             User user = userOptional.get();
-            System.out.println(user.getRole().getRoleName().name());
             return ResponseEntity.ok(Map.of(
                     "accessToken", jwtUtil.generateToken(identifier, user.getRole().getRoleName().name()),
                     "refreshToken", jwtUtil.generateRefreshToken(identifier)
@@ -73,7 +72,6 @@ public class AuthController {
             }
         } else { // Otherwise, assume it's a username
             userOptional = userRepository.findByUsername(identifier);
-            System.out.println(userOptional.get());
         }
 
         if (userOptional.isPresent() && password.matches(userOptional.get().getPassword())) {
@@ -93,7 +91,6 @@ public class AuthController {
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String token,
                                          @RequestBody Map<String, String> request) {
         token = token.substring(7); // Remove "Bearer " from token
-        System.out.println(token);
 
         revokedTokenRepository.save(new RevokedToken(token)); // Save to blacklist
 
@@ -101,7 +98,6 @@ public class AuthController {
         if (refreshToken != null) {
             revokedTokenRepository.save(new RevokedToken(refreshToken)); // Blacklist refresh token too
         }
-System.out.println(token);
         return ResponseEntity.ok("Logged out successfully.");
     }
 

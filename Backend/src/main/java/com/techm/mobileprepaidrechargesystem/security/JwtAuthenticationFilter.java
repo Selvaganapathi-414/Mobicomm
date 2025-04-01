@@ -37,12 +37,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 
 		String token = request.getHeader("Authorization");
-		System.out.println(token);
 
 		// Check if the Authorization header contains a Bearer token
 		if (token != null && token.startsWith("Bearer ")) {
 			token = token.substring(7); // Remove "Bearer " prefix
-			System.out.println("jeng "+token);
 
 			// Check if the token is expired
 			if (jwtUtil.isTokenExpired(token)) {
@@ -64,8 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			String username = jwtUtil.getUsernameFromToken(token);
 			String role = jwtUtil.getRoleFromToken(token);
 			
-			System.out.println("Role " +role);
-			System.out.println("username " +username);
+	
 
 			Optional<User> user;
 
@@ -89,7 +86,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 						.setAuthentication(new UsernamePasswordAuthenticationToken(username, null, authorities));
 
 				// Log the authorities for debugging
-				System.out.println("Authorities: " + authorities);
 			}
 		}
 

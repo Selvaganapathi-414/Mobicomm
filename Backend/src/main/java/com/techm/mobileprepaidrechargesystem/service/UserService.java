@@ -81,4 +81,25 @@ public class UserService {
         return false;
     }
 
+	public User getUserbyUsername(String username) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+		return userOptional.get();
+	}
+
+	public boolean isValidPassword(long userId , String userPassword) {
+		Optional<User> user = userRepository.findById(userId);
+		System.out.println(user.get());
+		if(user.get().getPassword().equals(userPassword)) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean changeAdminPassword(long userId, String password) {
+		User user = userRepository.findById(userId).get();
+		user.setPassword(password);
+		userRepository.save(user);
+		return true;
+	}
+
 }

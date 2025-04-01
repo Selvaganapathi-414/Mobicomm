@@ -27,15 +27,21 @@ public class UserController {
     }
 
 	@PreAuthorize("hasAuthority('CUSTOMER')")
-
     @GetMapping("/customer/phonenumbers/{phoneNumber}")
     public ResponseEntity<Boolean> checkUserPhoneNumber(@PathVariable String phoneNumber) {
         boolean exists = userService.isUserExistsByPhoneNumber(phoneNumber);
         return ResponseEntity.ok(exists);
     }
+	
+	@PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/admin/username/{username}")
+    public ResponseEntity<User> checkUserUsername(@PathVariable String username) {
+        User user = userService.getUserbyUsername(username);
+        return new ResponseEntity<>(user, HttpStatus.OK); 
+    }
 
-	@PreAuthorize("hasAuthority('CUSTOMER')")
-    @GetMapping("/customer/phone/{phoneNumber}")
+	@PreAuthorize("hasAuthority('CUSTOMER') or hasAuthority('ADMIN')")
+    @GetMapping("/both/phone/{phoneNumber}")
     public ResponseEntity<User> getUserByPhoneNumber(@PathVariable String phoneNumber) {
         return userService.getUserByPhoneNumber(phoneNumber)
                 .map(ResponseEntity::ok)
@@ -46,6 +52,16 @@ public class UserController {
     @GetMapping("/admin")
     public List<User> getNonAdminUsers() {
         return userService.getAllUsers();
+    }
+	
+	@PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/admin/validPassword/{userId}/{oldpassword}")
+    public ResponseEntity<String> matchPassword(@PathVariable int userId , @PathVariable String oldpassword) {
+        boolean status = userService.isValidPassword(userId , oldpassword);
+        if(status) {
+        	return ResponseEntity.ok("Password validation successful!");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Password does not match");
     }
 
 	@PreAuthorize("hasAuthority('ADMIN')")
@@ -59,6 +75,16 @@ public class UserController {
     public ResponseEntity<User> addUser(@RequestBody User user) {
         User createdUser = userService.addUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    }
+	
+	@PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/admin/changePassword/{userId}")
+    public ResponseEntity<String> changePassword(@PathVariable long userId ,@RequestBody User user) {
+        Boolean status = userService.changeAdminPassword(userId , user.getPassword());
+        if(status) {
+        	 return ResponseEntity.ok("Password validation successful!");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to Update");
     }
 
 	@PreAuthorize("hasAuthority('CUSTOMER') or hasAuthority('ADMIN')")
