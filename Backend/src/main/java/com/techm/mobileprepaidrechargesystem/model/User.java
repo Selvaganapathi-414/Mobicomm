@@ -68,6 +68,10 @@ public class User {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
     
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] userImage; 
+    
     public enum AccountStatus {
         ACTIVE, INACTIVE
     }

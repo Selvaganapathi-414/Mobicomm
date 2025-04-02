@@ -1,0 +1,47 @@
+pipeline {
+    agent any  // Runs on any available Jenkins agent
+
+    environment {
+        JAVA_HOME = 'C:\Program Files\Java\jdk-21'  // Set Java path
+        PATH = "$JAVA_HOME/bin:$PATH"
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/Selvaganapathi-414/Mobicomm.git'  // Replace with your repo URL
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Run Application') {
+            steps {
+                script {
+                    sh 'nohup java -jar target/*.jar > app.log 2>&1 &'
+                }
+            }
+        }
+
+        stage('Show Logs') {
+            steps {
+                script {
+                    sh 'tail -f app.log'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Build and deployment successful!"
+        }
+        failure {
+            echo "❌ Build failed! Check logs for errors."
+        }
+    }
+}

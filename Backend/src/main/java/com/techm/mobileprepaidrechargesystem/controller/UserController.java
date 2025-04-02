@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
@@ -117,5 +118,15 @@ public class UserController {
             throw new ResourceNotFoundException("User with ID " + id + " not found");
         }
         return ResponseEntity.ok("User status updated to Inactive");
+    }
+	
+	@PostMapping("/{userId}/image")
+    public ResponseEntity<byte[]> changeUserImage(@PathVariable Long userId,
+                                                  @RequestParam("file") MultipartFile file) {
+        try {
+            return userService.changeAndFetchUserImage(userId, file);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);  // Handle any errors
+        }
     }
 }

@@ -3,8 +3,13 @@ package com.techm.mobileprepaidrechargesystem.service;
 import com.techm.mobileprepaidrechargesystem.model.User;
 import com.techm.mobileprepaidrechargesystem.model.User.AccountStatus;
 import com.techm.mobileprepaidrechargesystem.repository.UserRepository;
-import org.springframework.stereotype.Service;
 
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,5 +106,25 @@ public class UserService {
 		userRepository.save(user);
 		return true;
 	}
+	
+	public ResponseEntity<byte[]> changeAndFetchUserImage(Long userId, MultipartFile file) throws IOException {
+        // If the file is not null, store (or update) the image
+        if (file != null) {
+            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Update the user image (it will overwrite the old image)
+            user.setUserImage(file.getBytes());
+            userRepository.save(user);
+        }
+
+        // Fetch updated image from DB
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isPresent() && userOpt.get().getUserImage() != null) {
+            byte[] imageData = userOpt.get().getUserImage();
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageData);  // Return the image data
+        } else {
+            return ResponseEntity.notFound().build();  // Image not found in DB
+        }
+    }
 
 }

@@ -13,6 +13,8 @@ import com.techm.mobileprepaidrechargesystem.exception.InvalidOtpException;
 public class OtpController {
 
     private final OtpService otpService;
+    
+    
 
     public OtpController(OtpService otpService) {
         this.otpService = otpService;
@@ -21,6 +23,7 @@ public class OtpController {
 	@PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping("/customer/otp/send")
     public ResponseEntity<String> sendOtp(@RequestParam String phoneNumber) {
+		System.out.println(phoneNumber);
         String response = otpService.generateAndSendOtp("+" + (phoneNumber.trim()));
         return ResponseEntity.ok(response);
     }
