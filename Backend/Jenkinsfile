@@ -1,42 +1,42 @@
 pipeline {
-    agent any  // Runs on any available Jenkins agent
+    agent any
 
     environment {
-        JAVA_HOME = 'C:\\Program Files\\Java\\jdk-21'  // Set Java path
-        PATH = "$JAVA_HOME/bin:$PATH"
+        JAVA_HOME = 'C:\\Program Files\\Java\\jdk-21'  // Windows format
+        PATH = "${JAVA_HOME}\\bin;${env.PATH}"
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/Selvaganapathi-414/Mobicomm.git'  // Replace with your repo URL
+                git branch: 'main', url: 'https://github.com/Selvaganapathi-414/Mobicomm.git'
             }
         }
 
         stage('Build') {
             steps {
-				dir('Backend') { 
-					sh 'mvn clean package'
-				}
+                dir('backend') {   
+                    bat 'mvn clean package'   // Use 'bat' instead of 'sh'
+                }
             }
         }
 
         stage('Run Application') {
             steps {
-				dir('Backend') {
-                script {
-                    sh 'nohup java -jar target/*.jar > app.log 2>&1 &'
-                }
+                dir('backend') {
+                    script {
+                        bat 'start /B java -jar target\\*.jar > app.log 2>&1'  // Windows format
+                    }
                 }
             }
         }
 
         stage('Show Logs') {
             steps {
-				dir('Backend') {
-                script {
-                    sh 'tail -f app.log'
-                }
+                dir('backend') {
+                    script {
+                        bat 'type app.log'
+                    }
                 }
             }
         }
