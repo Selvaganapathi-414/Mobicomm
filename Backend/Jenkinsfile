@@ -9,28 +9,34 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/Selvaganapathi-414/Mobicomm.git'  // Replace with your repo URL
+                git branch: 'main', url: 'https://github.com/Selvaganapathi-414/Mobicomm.git'  // Replace with your repo URL
             }
         }
 
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+				dir('backend') { 
+					sh 'mvn clean package'
+				}
             }
         }
 
         stage('Run Application') {
             steps {
+				dir('backend') {
                 script {
                     sh 'nohup java -jar target/*.jar > app.log 2>&1 &'
+                }
                 }
             }
         }
 
         stage('Show Logs') {
             steps {
+				dir('backend') {
                 script {
                     sh 'tail -f app.log'
+                }
                 }
             }
         }
