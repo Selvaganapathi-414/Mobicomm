@@ -15,7 +15,7 @@ pipeline {
 
         stage('Build') {
             steps {
-				dir('backend') { 
+				dir('Backend') { 
 					sh 'mvn clean package'
 				}
             }
@@ -23,7 +23,7 @@ pipeline {
 
         stage('Run Application') {
             steps {
-				dir('backend') {
+				dir('Backend') {
                 script {
                     sh 'nohup java -jar target/*.jar > app.log 2>&1 &'
                 }
@@ -33,7 +33,7 @@ pipeline {
 
         stage('Show Logs') {
             steps {
-				dir('backend') {
+				dir('Backend') {
                 script {
                     sh 'tail -f app.log'
                 }
