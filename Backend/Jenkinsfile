@@ -2,41 +2,73 @@ pipeline {
     agent any
 
     environment {
-        JAVA_HOME = 'C:\\Program Files\\Java\\jdk-21'  // Windows format
+        JAVA_HOME = 'C:\\Program Files\\Java\\jdk-21'
         PATH = "${JAVA_HOME}\\bin;${env.PATH}"
+        IMAGE_NAME = 'selvaganapathi414/mobicomm'
+        CONTAINER_NAME = 'mobicomm-container'
+        DOCKER_CREDENTIALS_ID = 'docker-hub-token'
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Clone Repository') {
             steps {
                 git branch: 'main', url: 'https://github.com/Selvaganapathi-414/Mobicomm.git'
             }
         }
 
-        stage('Build') {
+        stage('Build with Maven') {
             steps {
-                dir('backend') {   
-                    bat 'mvn clean package'   // Use 'bat' instead of 'sh'
+                dir('Backend') {
+                    bat 'mvn clean package -DskipTests'
                 }
             }
         }
 
-        stage('Run Application') {
+        stage('Build Docker Image') {
             steps {
-                dir('backend') {
+                dir('Backend') {
                     script {
-                        bat 'start /B java -jar target\\*.jar > app.log 2>&1'  // Windows format
+                        bat "docker build -t ${IMAGE_NAME}:latest ."
                     }
                 }
             }
         }
 
-        stage('Show Logs') {
+        stage('Login to Docker Hub') {
             steps {
-                dir('backend') {
+                withCredentials([string(credentialsId: DOCKER_CREDENTIALS_ID, variable: 'DOCKER_TOKEN')]) {
                     script {
-                        bat 'type app.log'
+                        bat "echo %DOCKER_TOKEN% | docker login -u selvaganapathi414 --password-stdin"
                     }
+                }
+            }
+        }
+
+        stage('Push Docker Image to Hub') {
+            steps {
+                script {
+                    bat "docker tag ${IMAGE_NAME}:latest selvaganapathi414/mobicomm:latest"
+                    bat "docker push selvaganapathi414/mobicomm:latest"
+                }
+            }
+        }
+
+        stage('Deploy Docker Container') {
+            steps {
+                script {
+                    bat """
+                        docker stop ${CONTAINER_NAME} || echo "Container not running, skipping stop"
+                        docker rm ${CONTAINER_NAME} || echo "Container does not exist, skipping remove"
+                        docker run -d -p 8080:8080 --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
+                    """
+                }
+            }
+        }
+
+        stage('Show Running Containers') {
+            steps {
+                script {
+                    bat 'docker ps'
                 }
             }
         }
@@ -44,7 +76,7 @@ pipeline {
 
     post {
         success {
-            echo "✅ Build and deployment successful!"
+            echo "✅ Build, Dockerization, Push to Docker Hub, and Deployment Successful!"
         }
         failure {
             echo "❌ Build failed! Check logs for errors."
