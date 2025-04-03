@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.techm.mobileprepaidrechargesystem.MobilePrepaidRechargeApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.50 s -- in com.techm.mobileprepaidrechargesystem.MobilePrepaidRechargeApplicationTests
