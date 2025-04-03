@@ -59,7 +59,7 @@ pipeline {
                     bat """
                         docker stop ${CONTAINER_NAME} || echo "Container not running, skipping stop"
                         docker rm ${CONTAINER_NAME} || echo "Container does not exist, skipping remove"
-                        docker run -d -p 8080:8080 --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
+                        docker run -d -p 8081:8081 --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
                     """
                 }
             }
