@@ -697,7 +697,7 @@
     
     <script>
     const phoneNumber = localStorage.getItem("phonenumber");
-    let userid;
+    let userId;
     window.onload = function () {
         fetchUserDetails();
     }
@@ -816,7 +816,7 @@ async function fetchUserDetails(){
     }
     const token = localStorage.getItem("accessToken");
 
-    await fetch(`http://localhost:8080/api/customer/phone/${phoneNumber}`,{
+    await fetch(`http://localhost:8080/api/both/phone/${phoneNumber}`,{
             method:"GET",
             headers : {
                 "Content-Type": "application/json",
@@ -830,7 +830,7 @@ async function fetchUserDetails(){
             return response.json();
         })
         .then(user => {
-            userid=user.userId;
+            userId=user.userId;
             document.getElementById("phonenumber").textContent = user.userPhonenumber;
             document.getElementById("name").textContent = `${user.userFname} ${user.userLname}`;
             document.getElementById("email").textContent = user.userEmail;
@@ -842,9 +842,9 @@ async function fetchUserDetails(){
         .catch(error => {
             console.error("Error fetching user details:", error);
         });
-        fetchCurrentPlan(userid);
+        fetchCurrentPlan(userId);
 
-        fetchUserTransactions(userid);
+        fetchUserTransactions(userId);
 
 };
 
@@ -852,7 +852,7 @@ async function fetchUserDetails(){
 function openModal() {
     const token = localStorage.getItem("accessToken");
 
-    fetch(`http://localhost:8080/api/customer/phone/${phoneNumber}`,{
+    fetch(`http://localhost:8080/api/both/phone/${phoneNumber}`,{
             method:"GET",
             headers : {
                 "Content-Type": "application/json",
@@ -900,7 +900,7 @@ function saveProfileChanges() {
 
     const token = localStorage.getItem("accessToken");
 
-    fetch(`http://localhost:8080/api/both/${userid}`, {
+    fetch(`http://localhost:8080/api/both/${userId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
