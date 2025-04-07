@@ -25,7 +25,7 @@
             <img style="cursor:pointer; margin-top: 10px;" src="../Images/user.png"  onclick = "toggleDropdown1()" alt="" height="35">
             <div id="dropdownMenu" class="dropdown-menu">
              <a href="" id="account" style="color:black; font-weight: bold;" >My Account</a>
-             <a href="" style="color:black" onclick="logout()">Logout</a>
+             <a style="color:black" onclick="logout()">Logout</a>
             </div>
          </div>
     </header>
@@ -34,11 +34,11 @@
 
         <aside class="sidebar">
             <h2>Admin</h2>
-            <ul class="sidebar-menu"> 
+            <ul class="sidebar-menu" > 
                 <li><a href="#" onclick="changeContent(5)">Dashboard</a></li>
                 <li><a href="#" onclick="changeContent(1)">User Management</a></li>
-                <li><a href="#" onclick="changeContent(2)">Transaction Management</a></li>
-                <li><a href="#" onclick="changeContent(3)">Recharge plan Management</a></li>
+                <li><a href="#" onclick="changeContent(2)">Recharge Management</a></li>
+                <li><a href="#" onclick="changeContent(3)">Plan Management</a></li>
                 <li><a href="#" onclick="changeContent(4)">Settings</a></li>
             </ul>
         </aside>
@@ -100,7 +100,7 @@
                             <input type="text" placeholder="Search users..." id="searchInput">
                         </div>
                         <div>
-                            <button id="download-btn" onclick="downloadTableAsCSV()">Download</button>
+                            <button id="download-btn" onclick="downloadTableAsCSV('user-table-expiry')">Download</button>
                         </div>
                     </div>
 
@@ -126,7 +126,49 @@
             </div>
 
             <div id="user-management" class="section">
-                <h3>User Management</h3><br>
+                <h3>User Management</h3>
+
+                <div style="display: flex; padding-left: 65%;">
+                  <div style="position: relative; display: inline-block; padding: 20px;">
+
+                    <img id="filterIcon" src="https://cdn-icons-png.flaticon.com/512/2676/2676824.png" width="24" height="24" style="cursor: pointer;" alt="Filter">
+                  
+                    <div id="filterDropdown" style="display: none; position: absolute; background: white; border: 1px solid #e0e0e0; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); padding: 16px; z-index: 100; width: 220px; font-family: Arial, sans-serif;">
+                        <div style="font-size: 14px; font-weight: 600; color: #333; margin-bottom: 12px;">Filter</div>
+                        
+                        <div style="display: flex; align-items:center; margin-bottom: 8px;">
+                          <input type="radio" id="filterAll" name="statusFilter" value="All" checked style="width: 40px;"> 
+                          <label for="filterAll" style="font-size: 14px; color: #444;">All</label>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;" >
+                          <input type="radio" id="filterActive" name="statusFilter" value="Active"  style="width: 40px;" >
+                          <label for="filterActive" style="font-size: 14px; color: #444;">Active</label>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; margin-bottom: 16px;">
+                          <input type="radio" id="filterInactive" name="statusFilter" value="Inactive"  style="width: 40px;">
+                          <label for="filterInactive" style="font-size: 14px; color: #444;">Inactive</label>
+                        </div>
+                        
+                        <button id="applyFilterBtn" style="background-color: #005f5f; color: white; border: none; border-radius: 4px; padding: 8px 16px; font-size: 14px; cursor: pointer; width: 100%;">Apply</button>
+                      </div>
+                  </div>
+
+                <div class="search-bar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" placeholder="Search users..." id="searchUserInput">
+                </div>
+                <div>
+                    <button id="download-btn" onclick="downloadTableAsCSV('user-table')">Download</button>
+                </div>
+            </div>
+                <br>
                 <button class="edit-btn" onclick="openAdduserModal()">Add New User</button>
                 <table id="user-table">
                     <thead>
@@ -257,6 +299,63 @@
 
             <div id="recharge-history" class="section">
                 <h3>Recharge History</h3>
+                <div style="display: flex; padding-left: 65%;">
+                    <div style="position: relative; display: inline-block; padding: 20px;">
+
+                        <img id="filterIconT" src="https://cdn-icons-png.flaticon.com/512/2676/2676824.png" width="24" height="24" style="cursor: pointer;" alt="Filter">
+                      
+                        <div id="filterDropdownT" style="display: none; position: absolute; background: white; border: 1px solid #e0e0e0; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); padding: 16px; z-index: 100; width: 220px; font-family: Arial, sans-serif;">
+                            <div style="font-size: 14px; font-weight: 600; color: #333; margin-bottom: 12px;">Status</div>
+                            
+                            <div style="display: flex; align-items:center; margin-bottom: 8px;">
+                              <input type="radio" id="filterAll" name="statusFilterT" value="All" checked style="width: 40px;"> 
+                              <label for="filterAll" style="font-size: 14px; color: #444;">All</label>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;" >
+                              <input type="radio" id="filterSuccess" name="statusFilterT" value="Success"  style="width: 40px;" >
+                              <label for="filterSuccess" style="font-size: 14px; color: #444;">Success</label>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; margin-bottom: 16px;">
+                              <input type="radio" id="filterFailure" name="statusFilterT" value="Failure"  style="width: 40px;">
+                              <label for="filterFailure" style="font-size: 14px; color: #444;">Failure</label>
+                            </div>
+
+                            <div style="font-size: 14px; font-weight: 600; color: #333; margin-bottom: 12px;">Mode</div>
+                            
+                            <div style="display: flex; align-items:center; margin-bottom: 8px;">
+                              <input type="radio" id="filterAll" name="statusFilterP" value="All" checked style="width: 40px;"> 
+                              <label for="filterAll" style="font-size: 14px; color: #444;">All</label>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;" >
+                              <input type="radio" id="filterupi" name="statusFilterP" value="upi"  style="width: 40px;" >
+                              <label for="filterupi" style="font-size: 14px; color: #444;">UPI</label>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; margin-bottom: 16px;">
+                              <input type="radio" id="filtercard" name="statusFilterP" value="card"  style="width: 40px;">
+                              <label for="filtercard" style="font-size: 14px; color: #444;">Card</label>
+                            </div>
+                            
+                            <button id="applyFilterBtnT" style="background-color: #005f5f; color: white; border: none; border-radius: 4px; padding: 8px 16px; font-size: 14px; cursor: pointer; width: 100%;">Apply</button>
+                          </div>
+                      </div>
+
+                    <div class="search-bar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" placeholder="Search users..." id="searchHistoryInput">
+                    </div>
+                    <div>
+                        <button id="download-btn" onclick="downloadTableAsCSV('history-table')">Download</button>
+                    </div>
+                </div>
                 <table id="history-table">
                     <thead>
                         <tr>
@@ -652,58 +751,94 @@
 </body>
 <script>
 
-async function logout(clicked) {
-    let confirmLogout = confirm("Are you sure you want to log out?");
-    if (!confirmLogout) return; // If the user cancels, do nothing
+searchInput.addEventListener("input" , () =>{
 
-    let token = localStorage.getItem("accessToken");
-    let refreshtoken = localStorage.getItem("refreshToken");
-
-    if (!token) {
-        alert("User is not logged in.");
-        return;
+    let name = document.getElementById("searchInput").value;
+    if(name.length==0){
+        name="All"
     }
+    fetchUsers(name);
 
-    let tokens = { refreshToken: refreshtoken };
+});
 
-    try {
-        const response = await fetch("http://localhost:8080/auth/logout", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify(tokens) // Prevent null issues
-        });
+searchUserInput.addEventListener("input" , () =>{
 
-        console.log(response);
-
-        if (!response.ok) {
-            alert("Logout failed. Please try again.");
-        } else {
-            // Clear tokens
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-
-            // Show toast message
-            Toastify({
-                text: "Logged out Successfully",
-                duration: 3000,  // Toast visible for 3 seconds
-                gravity: "top",
-                position: "right",
-                backgroundColor: "green",
-            }).showToast();
-
-            // Delay navigation until toast is finished
-            setTimeout(() => {
-                window.location.href = "adminLogin.html"; 
-            }, 3000); // Wait for the toast to finish before redirecting
-        }
-    } catch (error) {
-        console.error( error.message);
-        alert("Something went wrong. Try again.");
-    }
+let name = document.getElementById("searchUserInput").value;
+if(name.length==0){
+    name="All"
 }
+fetchUser(name);
+
+});
+
+
+searchHistoryInput.addEventListener("input" , () =>{
+
+let name = document.getElementById("searchHistoryInput").value;
+if(name.length==0){
+    name="All"
+}
+fetchTransactions(name , "All");
+
+});
+
+
+async function logout() {
+ 
+
+ let confirmLogout = confirm("Are you sure you want to log out?");
+ if (!confirmLogout) return;
+
+ let token = localStorage.getItem("accessToken");
+ let rtoken = localStorage.getItem("refreshToken");
+
+ if (!token || !rtoken) {
+     alert("Session expired or user not logged in.");
+     window.location.href = "adminLogin.html";
+     return;
+ }
+
+ try {
+     // Make sure this URL matches your actual backend URL and port
+     let response = await fetch("http://localhost:9090/auth/logout", {
+         method: "POST",
+         headers: {
+             "Content-Type": "application/json",
+             "Authorization": `Bearer ${token}`
+         },
+         body: JSON.stringify({ refreshToken: rtoken }),
+     
+     });
+
+    
+
+     if (!(response.ok)) {
+         const errorText = await response.text();
+         console.error("Logout failed with status:", response.status, errorText);
+         // Continue with local logout despite server error
+     }
+ } catch (error) {
+     console.error("Fetch error during logout:", error);
+     // Continue with local logout despite network error
+ } finally {
+     // Always clear tokens from localStorage regardless of server response
+     localStorage.removeItem("accessToken");
+     localStorage.removeItem("refreshToken");
+    
+     Toastify({
+         text: "Logged out Successfully",
+         duration: 2000,
+         gravity: "top",
+         position: "right",
+         backgroundColor: "green",
+     }).showToast(); 
+
+     window.location.href = "adminLogin.html";
+
+           
+ }
+}
+
 
 function toggleDropdown1() {
     
@@ -714,11 +849,11 @@ function toggleDropdown1() {
 
 async function openDeleteCategoryModal() {
     let categoryList = document.getElementById("categoryList");
-    categoryList.innerHTML = ""; // Clear existing content
+    categoryList.innerHTML = "";
 
     const token = localStorage.getItem("accessToken");
     try {
-        const response = await fetch("http://localhost:8080/api/both/Category/getCategory",{
+        const response = await fetch("http://localhost:9090/api/both/Category/getCategory",{
             method:"GET",
             headers : {
                 "Content-Type": "application/json",
@@ -740,7 +875,7 @@ async function openDeleteCategoryModal() {
             categoryList.innerHTML += checkbox;
         });
 
-        document.getElementById("deleteCategoryModal").style.display = "block"; // Show modal
+        document.getElementById("deleteCategoryModal").style.display = "block"; 
     } catch (error) {
         console.error("Error fetching categories:", error);
     }
@@ -771,8 +906,8 @@ async function deleteSelectedCategories() {
 
     const token = localStorage.getItem("accessToken");
     try {
-        const response = await fetch("http://localhost:8080/api/admin/Category/delete", {
-            method: "POST", // Assuming backend supports POST for bulk delete
+        const response = await fetch("http://localhost:9090/api/admin/Category/delete", {
+            method: "POST",
             headers: { 
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
@@ -784,7 +919,7 @@ async function deleteSelectedCategories() {
 
         for (const categoryId of selectedCategories) {
         
-            const response = await fetch(`http://localhost:8080/api/admin/deleteByCategory/${categoryId}`, {
+            const response = await fetch(`http://localhost:9090/api/admin/deleteByCategory/${categoryId}`, {
                 method: "DELETE",
                 headers: { 
                     "Content-Type": "application/json",
@@ -819,7 +954,7 @@ document.addEventListener("DOMContentLoaded", renderCategory);
     const token = localStorage.getItem("accessToken");
 
     try {
-        const response = await fetch("http://localhost:8080/api/both/Category/getCategory" ,{
+        const response = await fetch("http://localhost:9090/api/both/Category/getCategory" ,{
             method:"GET",
             headers : {
                 "Content-Type": "application/json",
@@ -952,7 +1087,7 @@ async function addCategoryModal(){
 
     CName = CDName.replace(" ","");
     const token = localStorage.getItem("accessToken");
-    await fetch("http://localhost:8080/api/admin/Category/addCategory" , {
+    await fetch("http://localhost:9090/api/admin/Category/addCategory" , {
         method:"POST",
         headers : {
             "Content-Type" : "application/JSON",
@@ -1000,7 +1135,7 @@ async function fetchCategory(){
 category.innerHTML = "";
 const token = localStorage.getItem("accessToken");
 
-await fetch("http://localhost:8080/api/both/Category/getCategory",{
+await fetch("http://localhost:9090/api/both/Category/getCategory",{
             method:"GET",
             headers : {
                 "Content-Type": "application/json",
@@ -1062,7 +1197,7 @@ let categoryName;
     }
 async function loadPlans(category) {
     const token = localStorage.getItem("accessToken");
-    const apiUrl = `http://localhost:8080/api/both/plans/category/${category}`; 
+    const apiUrl = `http://localhost:9090/api/both/plans/category/${category}`; 
 
     try {
         const response = await fetch(apiUrl ,{
@@ -1215,6 +1350,7 @@ function openTab(evt, tabName) {
 
    loadPlans(tabName);
 }
+document.querySelectorAll(".sidebar li a")[0].classList.add("active");
 
 document.querySelectorAll(".sidebar li a").forEach(item => {
             item.addEventListener("click", function() {
@@ -1235,11 +1371,11 @@ document.querySelectorAll(".sidebar li a").forEach(item => {
     function changeContent(input) {
         
         if(input == 1){
-            fetchUser();
+            fetchUser("All");
         }
 
         if(input == 2){
-            fetchTransactions();
+            fetchTransactions("All" , "All");
         }
 
         if(input == 3){
@@ -1258,7 +1394,7 @@ document.querySelectorAll(".sidebar li a").forEach(item => {
     async function fetchStatistics(){
         const token = localStorage.getItem("accessToken");
 
-        let stats = await fetch("http://localhost:8080/api/admin/transactions/summary",{
+        let stats = await fetch("http://localhost:9090/api/admin/transactions/summary",{
             method:"GET",
             headers : {
                 "Authorization" : `Bearer ${token}`
@@ -1278,7 +1414,7 @@ document.querySelectorAll(".sidebar li a").forEach(item => {
 
     document.addEventListener('DOMContentLoaded', function () {
         fetchStatistics();
-        fetchUsers();
+        fetchUsers("All");
 
         const transactionCtx = document.getElementById('transactionChart').getContext('2d');
 
@@ -1384,7 +1520,7 @@ document.querySelectorAll(".sidebar li a").forEach(item => {
 
     function openedituserModal(userId) {
         const token = localStorage.getItem("accessToken");
-    fetch(`http://localhost:8080/api/both/${userId}`,{
+    fetch(`http://localhost:9090/api/both/${userId}`,{
             method:"GET",
             headers : {
                 "Authorization" : `Bearer ${token}`
@@ -1442,7 +1578,7 @@ function saveedituserChanges() {
         userPincode: pincode
     };
     const token = localStorage.getItem("accessToken");
-    fetch(`http://localhost:8080/api/both/${userId}`, {
+    fetch(`http://localhost:9090/api/both/${userId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -1465,7 +1601,7 @@ function saveedituserChanges() {
         } , 4000);
 
         closeedituserModal();
-        fetchUser(); // Refresh user list
+        fetchUser("All"); // Refresh user list
     })
     .catch(error => console.error("Error updating user:", error));
 }
@@ -1521,7 +1657,7 @@ function saveadduserChanges() {
     };
     const token = localStorage.getItem("accessToken");
 
-    fetch("http://localhost:8080/api/admin", {
+    fetch("http://localhost:9090/api/admin", {
         method: "POST",
         headers: { "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
@@ -1548,7 +1684,7 @@ function saveadduserChanges() {
         } , 4000);
 
         closeadduserModal();
-        fetchUser(); // Refresh user list
+        fetchUser("All"); // Refresh user list
     })
     .catch(error => console.error("Error adding user:", error));
 }
@@ -1584,8 +1720,8 @@ function validateInput(inputId, errorId) {
 }
  
    
-    function downloadTableAsCSV() {
-        const table = document.getElementById("user-table-expiry");
+    function downloadTableAsCSV(tablename) {
+        const table = document.getElementById(tablename);
         const rows = table.querySelectorAll("tr");
         let csvContent = "";
 
@@ -1600,7 +1736,7 @@ function validateInput(inputId, errorId) {
         const blob = new Blob([csvContent], { type: "text/csv" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = "user_table.csv";
+        link.download = "report.csv";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -1712,7 +1848,7 @@ async function openEditModal(tableType, planId) {
         const token = localStorage.getItem("accessToken");
         
         // Fetch plan details from the backend API
-        const response = await fetch(`http://localhost:8080/api/both/plans/${planId}`,{
+        const response = await fetch(`http://localhost:9090/api/both/plans/${planId}`,{
             method:"GET",
             headers : {
                 "Authorization" : `Bearer ${token}`
@@ -1860,7 +1996,7 @@ async function savePlan() {
         }
 
         const token = localStorage.getItem("accessToken");
-        const response = await fetch(`http://localhost:8080/api/admin/plans/update/${currentTable}/${planId}`, {
+        const response = await fetch(`http://localhost:9090/api/admin/plans/update/${currentTable}/${planId}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -1930,7 +2066,7 @@ function closeEditModal() {
         async function confirmDelete() {
             const token = localStorage.getItem("accessToken");
             try {
-            let response = await fetch(`http://localhost:8080/api/admin/plans/delete/${planToDelete}`, {
+            let response = await fetch(`http://localhost:9090/api/admin/plans/delete/${planToDelete}`, {
                 method: "DELETE",
                 headers: {
                 "Authorization": `Bearer ${token}`
@@ -2014,7 +2150,7 @@ function closeEditModal() {
     }
 
     const token = localStorage.getItem("accessToken");
-    fetch(`http://localhost:8080/api/admin/plans/add/category/${categoryName}`, {
+    fetch(`http://localhost:9090/api/admin/plans/add/category/${categoryName}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -2083,19 +2219,25 @@ function closeModals() {
 }
 
 
-function fetchUsers() {
+async function fetchUsers(username) {
     const token = localStorage.getItem("accessToken");
-    fetch('http://localhost:8080/api/admin/currentPlan/expiring',{
+    let response = await fetch(`http://localhost:9090/api/admin/currentPlan/expiring/${username}`,{
             method:"GET",
             headers : {
                 "Content-Type": "application/json",
                 "Authorization" : `Bearer ${token}`
-            }
+            },
         }) 
-        .then(response => response.json())
-        .then(users => {
-            const tableBody = document.getElementById("user-table-expiry").querySelector("tbody");
-            tableBody.innerHTML = "";
+        const tableBody = document.getElementById("user-table-expiry").querySelector("tbody");
+        tableBody.innerHTML = "";
+        if(response.status == 204){
+            tableBody.innerHTML =`<h3>No Data Found </h3>`;
+
+            return;
+        }
+
+        let users =  await response.json();
+            
 
             users.forEach(userdetails => {
                 const row = document.createElement("tr");
@@ -2106,13 +2248,11 @@ function fetchUsers() {
                         <th>${userdetails.userEmail}</th>
                         <th>${userdetails.phoneNumber}</th>
                         <th><span class="status status-warning">Expires in 3 days</span></th>
-                                        <button class="save-btn" onclick="sentEmail('${userdetails.userEmail}', '${userdetails.username}')">Notify</button></th>
+                        <th><button class="notify-btn" onclick="sentEmail('${userdetails.userEmail}', '${userdetails.username}')">Notify</button></th>
                     </tr>
                 `;
                 tableBody.appendChild(row);
-            });
-        })
-        .catch(error => console.error("Error fetching users:", error.errorMessage));
+            })
         initializePagination("user-table-expiry", "pagination-container-expiry");
 
 }
@@ -2127,7 +2267,7 @@ async function sentEmail(useremail , username){
 
     let token = localStorage.getItem("accessToken");
 
-    let response  = await fetch("http://localhost:8080/api/admin/notify/sendEmail", {
+    let response  = await fetch("http://localhost:9090/api/admin/notify/sendEmail", {
         method: "POST",
         headers: { 
             "Content-Type": "application/json",
@@ -2157,9 +2297,9 @@ async function sentEmail(useremail , username){
 
 
 
-function fetchUser() {
+function fetchUser(username) {
     const token = localStorage.getItem("accessToken");
-        fetch("http://localhost:8080/api/admin",{
+        fetch(`http://localhost:9090/api/admin?name=${username}`,{
             method:"GET",
             headers : {
                 "Authorization" : `Bearer ${token}`
@@ -2220,7 +2360,7 @@ function showDeleteUserModal(userId) {
 document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
     const token = localStorage.getItem("accessToken");
     if (userIdToDelete) {
-    fetch(`http://localhost:8080/api/admin/changeStatus/${userIdToDelete}`, {
+    fetch(`http://localhost:9090/api/admin/changeStatus/${userIdToDelete}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -2231,7 +2371,7 @@ document.getElementById("confirmDeleteBtn").addEventListener("click", function (
     })
     .then(response => {
         if (response.ok) {
-            fetchUser(); 
+            fetchUser("All"); 
         } else {
             alert("Error updating user status.");
         }
@@ -2253,10 +2393,10 @@ function closeDeleteUserModal() {
     userIdToDelete = null;
 }
 
-async function fetchTransactions() {
+async function fetchTransactions(username , mode) {
     const token = localStorage.getItem("accessToken");
     try {
-        const response = await fetch('http://localhost:8080/api/admin/transactions',{
+        const response = await fetch(`http://localhost:9090/api/admin/transactions?name=${username}&mode=${mode}`,{
             method:"GET",
             headers : {
                 "Authorization" : `Bearer ${token}`
@@ -2308,6 +2448,35 @@ async function fetchTransactions() {
     }
 }
  
+const filterIcon = document.getElementById("filterIcon");
+const filterDropdown = document.getElementById("filterDropdown");
+const applyFilterBtn = document.getElementById("applyFilterBtn");
+
+const filterIconT = document.getElementById("filterIconT");
+const filterDropdownT = document.getElementById("filterDropdownT");
+const applyFilterBtnT = document.getElementById("applyFilterBtnT");
+
+filterIcon.addEventListener("click", () => {
+    filterDropdown.style.display = (filterDropdown.style.display === "none") ? "block" : "none";
+});
+
+filterIconT.addEventListener("click", () => {
+    filterDropdownT.style.display = (filterDropdownT.style.display === "none") ? "block" : "none";
+});
+
+applyFilterBtn.addEventListener("click", () => {
+    let selectedStatus = document.querySelector('input[name="statusFilter"]:checked').value;
+    fetchUser(selectedStatus); 
+    filterDropdown.style.display = "none";
+});
+
+applyFilterBtnT.addEventListener("click", () => {
+    let selectedStatus = document.querySelector('input[name="statusFilterT"]:checked').value;
+    let selectedModeStatus = document.querySelector('input[name="statusFilterP"]:checked').value;
+
+    fetchTransactions(selectedStatus , selectedModeStatus); 
+    filterDropdownT.style.display = "none";
+});
 
 
 </script>

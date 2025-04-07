@@ -376,7 +376,7 @@
                         <img style="cursor:pointer; margin-top: 1px;" src="../Images/user.png" onclick="toggleDropdown()" alt="" height="25">
                         <div id="dropdownMenu" class="dropdown-menu">
                          <a href="" style="color:black">My Account</a>
-                         <a href="" style="color: black;" onclick="logout(this)">Logout</a>
+                         <a style="color: black;" onclick="logout(this)">Logout</a>
                         </div>
                      </div>
                 
@@ -579,7 +579,7 @@ console.log(newPassword + " " + oldPassword + "  " + confirmPassword);
     if(status){
 
     try {
-       let response = await fetch(`http://localhost:8080/api/admin/validPassword/${userid}/${oldPassword}`, {
+       let response = await fetch(`http://localhost:9090/api/admin/validPassword/${userid}/${oldPassword}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -596,7 +596,7 @@ console.log(newPassword + " " + oldPassword + "  " + confirmPassword);
 
             passwords = {password : newPassword};
 
-            let response = await fetch(`http://localhost:8080/api/admin/changePassword/${userid}`, {
+            let response = await fetch(`http://localhost:9090/api/admin/changePassword/${userid}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -645,56 +645,60 @@ console.log(newPassword + " " + oldPassword + "  " + confirmPassword);
     
     }
     
-   async function logout(clicked) {
-    let confirmLogout = confirm("Are you sure you want to log out?");
-    if (!confirmLogout) return; // If the user cancels, do nothing
+    async function logout() {
+ 
 
-    let token = localStorage.getItem("accessToken");
-    let refreshtoken = localStorage.getItem("refreshToken");
+ let confirmLogout = confirm("Are you sure you want to log out?");
+ if (!confirmLogout) return;
 
-    if (!token) {
-        alert("User is not logged in.");
-        return;
-    }
+ let token = localStorage.getItem("accessToken");
+ let rtoken = localStorage.getItem("refreshToken");
 
-    let tokens = { refreshToken: refreshtoken };
+ if (!token || !rtoken) {
+     alert("Session expired or user not logged in.");
+     window.location.href = "adminLogin.html";
+     return;
+ }
 
-    try{
+ try {
+     // Make sure this URL matches your actual backend URL and port
+     let response = await fetch("http://localhost:9090/auth/logout", {
+         method: "POST",
+         headers: {
+             "Content-Type": "application/json",
+             "Authorization": `Bearer ${token}`
+         },
+         body: JSON.stringify({ refreshToken: rtoken }),
+     
+     });
 
-        const response = await fetch("http://localhost:8080/auth/logout", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify(tokens) // Prevent null issues
-        });
+    
 
-        if (!response.ok) {
-            alert("Logout failed. Please try again.");
-        } else {
-            // Clear tokens
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
+     if (!(response.ok)) {
+         const errorText = await response.text();
+         console.error("Logout failed with status:", response.status, errorText);
+         // Continue with local logout despite server error
+     }
+ } catch (error) {
+     console.error("Fetch error during logout:", error);
+     // Continue with local logout despite network error
+ } finally {
+     // Always clear tokens from localStorage regardless of server response
+     localStorage.removeItem("accessToken");
+     localStorage.removeItem("refreshToken");
+    
+     Toastify({
+         text: "Logged out Successfully",
+         duration: 2000,
+         gravity: "top",
+         position: "right",
+         backgroundColor: "green",
+     }).showToast(); 
 
-            // Show toast message
-            Toastify({
-                text: "Logged out Successfully",
-                duration: 3000,  // Toast visible for 3 seconds
-                gravity: "top",
-                position: "right",
-                backgroundColor: "green",
-            }).showToast();
+     window.location.href = "adminLogin.html";
 
-            // Delay navigation until toast is finished
-            setTimeout(() => {
-                window.location.href = "adminLogin.html"; 
-            }, 3000); // Wait for the toast to finish before redirecting
-        }
-    } catch (error) {
-        console.error( error.message);
-        alert("Something went wrong. Try again.");
-    }
+          
+ }
 }
         
     
@@ -705,7 +709,7 @@ async function fetchUserDetails(){
     }
     const token = localStorage.getItem("accessToken");
 
-    await fetch(`http://localhost:8080/api/admin/username/${username}`,{
+    await fetch(`http://localhost:9090/api/admin/username/${username}`,{
             method:"GET",
             headers : {
                 "Content-Type": "application/json",
@@ -739,7 +743,7 @@ async function fetchUserDetails(){
 function openModal() {
     const token = localStorage.getItem("accessToken");
 
-    fetch(`http://localhost:8080/api/both/phone/${phonenumber}`,{
+    fetch(`http://localhost:9090/api/both/phone/${phonenumber}`,{
             method:"GET",
             headers : {
                 "Content-Type": "application/json",
@@ -789,7 +793,7 @@ function saveProfileChanges() {
 
     const token = localStorage.getItem("accessToken");
 
-    fetch(`http://localhost:8080/api/both/${userid}`, {
+    fetch(`http://localhost:9090/api/both/${userid}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",

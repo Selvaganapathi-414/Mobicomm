@@ -521,7 +521,7 @@ svg {
              <img style="cursor:pointer; margin-top: 10px;" src="../Images/user.png"  onclick = "toggleDropdown()" alt="" height="25">
              <div id="dropdownMenu" class="dropdown-menu">
               <a href="" id="account">My Account</a>
-              <a href="" onclick="logout()">Logout</a>
+              <a onclick="logout()">Logout</a>
              </div>
           </div>
         </div>
@@ -574,7 +574,7 @@ async function renderCategory(){
   let token = localStorage.getItem("accessToken");
 console.log(token);
   try{
-    const response = await fetch("http://localhost:8080/api/both/Category/getCategory",{
+    const response = await fetch("http://localhost:9090/api/both/Category/getCategory",{
             method:"GET",
             headers : {
                 "Authorization" : `Bearer ${token}`
@@ -635,7 +635,7 @@ console.log(token);
 async function loadPlans(category) {
   let token = localStorage.getItem("accessToken");
 
-    const apiUrl = `http://localhost:8080/api/both/plans/category/${category}`; 
+    const apiUrl = `http://localhost:9090/api/both/plans/category/${category}`; 
 
     try {
         const response = await fetch(apiUrl,{
@@ -668,7 +668,7 @@ async function loadPlans(category) {
                     
                     <div class="plan-details">
                         <p>Validity: <span class="validityId">${plan.planValidityInDays} Days</span></p>
-                        <p><b>${plan.planOverallData ? plan.planOverallData + ' GB' : 'N/A'}</b> GB/Day</p>
+                        <p><b>${plan.planOverallData ? plan.planOverallData/plan.planValidityInDays + ' GB' : 'N/A'}</b> GB/Day</p>
                     </div>
                     <button class="buy-btn" onclick="payment(${plan.planId} , ${plan.planPrice})">Buy</button>
                 </div>
@@ -832,6 +832,8 @@ function toggleDropdown() {
 }
 
 async function logout() {
+ 
+
     let confirmLogout = confirm("Are you sure you want to log out?");
     if (!confirmLogout) return;
 
@@ -840,51 +842,47 @@ async function logout() {
 
     if (!token || !rtoken) {
         alert("Session expired or user not logged in.");
+        window.location.href = "index.html";
         return;
     }
 
     try {
-        const response = await fetch("http://localhost:8080/auth/logout", {
+        // Make sure this URL matches your actual backend URL and port
+        let response = await fetch("http://localhost:9090/auth/logout", {
             method: "POST",
             headers: {
-                "Content-Type" : "application/json",
-                "Authorization" : `Bearer ${token}`
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ refreshToken : rtoken })
+            body: JSON.stringify({ refreshToken: rtoken }),
+        
         });
 
-        alert(response.status);
-        console.log("Response:", response);
-        console.log("Response Status:", response.status);
+       
 
-        if (!response.ok) {
+        if (!(response.ok)) {
             const errorText = await response.text();
-            console.error("Logout failed:", errorText);
-            alert("Logout failed. Try again.");
-            return;
+            console.error("Logout failed with status:", response.status, errorText);
+            // Continue with local logout despite server error
         }
-
-        
+    } catch (error) {
+        console.error("Fetch error during logout:", error);
+        // Continue with local logout despite network error
+    } finally {
+        // Always clear tokens from localStorage regardless of server response
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-
-        // Show toast message
+       
         Toastify({
-            text: "Logged out Successfully",
-            duration: 3000,
-            gravity: "top",
-            position: "right",
-            backgroundColor: "green",
-        }).showToast();
+         text: "Logged out Successfully",
+         duration: 2000,
+         gravity: "top",
+         position: "right",
+         backgroundColor: "green",
+     }).showToast(); 
 
-        // Redirect after toast duration
-        setTimeout(() => {
-            console.log("Redirecting to index.html...");
-            window.location.href = "index.html";
-        }, 3000);
-    } catch (error) {
-        console.error("Fetch error:", error);
-        alert("Something went wrong: " + error.message);
+        window.location.href = "index.html";
+ 
     }
 }
 
@@ -911,11 +909,13 @@ let planDetails
 let userDetails;
 let transactionResult; 
 
+
 async function startPayment() {
+  let paymentstatus = false;
   let token = localStorage.getItem("accessToken");
 
     try {
-        let response = await fetch(`http://localhost:8080/api/customer/payments/create?amount=${localStorage.getItem('price')}`, { 
+        let response = await fetch(`http://localhost:9090/api/customer/payments/create?amount=${localStorage.getItem('price')}`, { 
           method: "POST" ,
           headers : {
                 "Content-Type": "application/json",
@@ -949,7 +949,7 @@ async function startPayment() {
         let token = localStorage.getItem("accessToken");
         console.log(token);
 
-        await fetch("http://localhost:8080/api/customer/success/sendEmail", {
+        await fetch("http://localhost:9090/api/customer/success/sendEmail", {
             method: "POST",
             headers: { "Content-Type": "application/json", 
                       "Authorization" : `Bearer ${token}`
@@ -968,24 +968,26 @@ async function startPayment() {
         };
 
         var rzp = new Razorpay(options);
-        rzp.open();
 
         rzp.on('payment.failed', async function (response) {
-            alert("Payment failed! Reason: " + response.error.description);
-
+          if(paymentstatus){
+            return;
+          }
+          paymentstatus = true;
             await moveNext();
         });
+        rzp.open();
+
 
     } catch (error) {
         console.error("Error initiating payment:", error);
-        await moveNext();
     }
 }
 
 async function getPaymentDetails(paymentId) {
   let token = localStorage.getItem("accessToken");
 
-    const response = await fetch(`http://localhost:8080/api/customer/getPaymentDetails?payment_id=${paymentId}`, {
+    const response = await fetch(`http://localhost:9090/api/customer/getPaymentDetails?payment_id=${paymentId}`, {
       method: "GET" ,
           headers : {
                 "Authorization" : `Bearer ${token}`
@@ -1000,19 +1002,18 @@ async function getPaymentDetails(paymentId) {
 async function moveNext() {
     let phonenumber = localStorage.getItem("phonenumber");
     let planId = localStorage.getItem("id");
-
     let token = localStorage.getItem("accessToken");
 
 
     try {
         // Fetch user and plan details
-        let userDetailsResponse = await fetch(`http://localhost:8080/api/customer/phone/${phonenumber}`,{
+        let userDetailsResponse = await fetch(`http://localhost:9090/api/both/phone/${phonenumber}`,{
             method:"GET",
             headers : {
                 "Authorization" : `Bearer ${token}`
             }
             });
-        let planDetailsResponse = await fetch(`http://localhost:8080/api/both/plans/${planId}`,{
+        let planDetailsResponse = await fetch(`http://localhost:9090/api/both/plans/${planId}`,{
             method:"GET",
             headers : {
                 "Authorization" : `Bearer ${token}`
@@ -1034,10 +1035,9 @@ async function moveNext() {
             transactionMode:"empty", // Set based on user choice
             transactionStatus: "failure" // Default status
         };
-        let token = localStorage.getItem("accessToken");
 
         // Post transaction data
-        let transactionResponse = await fetch("http://localhost:8080/api/customer/transactions", {
+        let transactionResponse = await fetch("http://localhost:9090/api/customer/transactions", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -1069,7 +1069,7 @@ try {
           dataUsage: 0,
       };
 
-      let response = await fetch("http://localhost:8080/api/customer/currentPlan/saveOrUpdate", {
+      let response = await fetch("http://localhost:9090/api/customer/currentPlan/saveOrUpdate", {
           method: "POST",
           headers: { "Content-Type": "application/json","Authorization" : `Bearer ${token}`
         },
@@ -1110,13 +1110,13 @@ async function waitPlease(paymentway) {
         let token = localStorage.getItem("accessToken");
 
         const [userResponse, planResponse] = await Promise.all([
-            fetch(`http://localhost:8080/api/customer/phone/${phonenumber}`,{
+            fetch(`http://localhost:9090/api/both/phone/${phonenumber}`,{
             method:"GET",
             headers : {
                 "Authorization" : `Bearer ${token}`
             }
             }),
-            fetch(`http://localhost:8080/api/both/plans/${planID}`,{
+            fetch(`http://localhost:9090/api/both/plans/${planID}`,{
             method:"GET",
             headers : {
                 "Authorization" : `Bearer ${token}`
@@ -1145,7 +1145,7 @@ async function waitPlease(paymentway) {
             transactionStatus: "success"
         };
 
-        let transactionResponse = await fetch("http://localhost:8080/api/customer/transactions", {
+        let transactionResponse = await fetch("http://localhost:9090/api/customer/transactions", {
             method: "POST",
             headers: { "Content-Type": "application/json" , "Authorization" : `Bearer ${token}`
           },
@@ -1162,8 +1162,7 @@ async function waitPlease(paymentway) {
       
         console.error("Error during transaction processing:", error);
         alert("Failed to process transaction: " + error.message);
-    } finally {
-    }
+    } 
 }
 </script>
 </html>

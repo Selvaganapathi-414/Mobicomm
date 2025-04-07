@@ -15,14 +15,14 @@
             background-color: #007c7c;
             color: white;
             text-align: center;
-            padding: 15px;
+            padding: 0px;
             font-size: 24px;
         }
         .container {
             max-width: 800px;
-            margin: 20px auto;
+            margin: 0px auto;
             background: white;
-            padding: 20px;
+            padding: 90px;
             border-radius: 8px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
@@ -41,11 +41,70 @@
             color: white;
             margin-top: 20px;
         }
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #006666;
+            position: fixed;
+            width: 100%;
+            height: 60px;
+            z-index: 1000;
+        }
+
+        .navbar .logo img {
+            height: 40px;
+            margin-right: 1rem;
+            margin-left: 0.5rem;
+
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            padding: 0;
+            margin: 0;
+        }
+
+        .navbar ul li {
+            margin: 0 15px;
+        }
+
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 7px; 
+            display: inline-block;
+            border-radius: 3px;
+        }
+
+        .navbar ul li a:hover {
+            background-color: rgb(183, 242, 240);
+            color: #005f5f;
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">About Us</div>
+    <header class="navbar">
+        <div class="logo">
+            <img src="../Images/logo2-removebg-preview.png" alt="Logo">
+        </div>
+        <div class="hamburger" id="hamburger-menu" >
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav id="nav-menu" style="padding-right: 40px;">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="" style="text-decoration: underline;">About us</a></li>
+                <li><a href="contactUs.html">Contact us</a></li>
+                <li><a href="support.html?status=false">Support</a></li>
+            </ul>
+        </nav>
+    </header>
 
     <div class="container">
         <h2>Welcome to MobiComm</h2>

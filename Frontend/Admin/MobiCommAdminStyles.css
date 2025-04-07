@@ -28,7 +28,7 @@ header img{
     margin: 1rem;
   }
   .main-content{
-    width: 95%; 
+    width: 100%; 
   }
 .sidebar {
     width: 290px;
@@ -36,6 +36,7 @@ header img{
     border-radius: 6px;
     padding: 1rem;
     margin-right: 1rem;
+
   }
   
 .sidebar-menu {
@@ -408,6 +409,21 @@ input:focus, select:focus, textarea:focus {
   background-color: rgb(5, 63, 59);
 }
 
+
+.notify-btn{
+
+  background-color: rgb(0, 0, 255);
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  margin: 5px;
+  transition: background-color 0.3s ease;
+
+}
 
 
 table {

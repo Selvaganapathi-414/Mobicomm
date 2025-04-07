@@ -503,8 +503,8 @@ async function moveNext() {
 
     try {
         // Fetch user and plan details
-        let userDetailsResponse = await fetch(`http://localhost:8080/api/subscribers/phone/${phonenumber}`);
-        let planDetailsResponse = await fetch(`http://localhost:8080/api/plans/${planId}`);
+        let userDetailsResponse = await fetch(`http://localhost:9090/api/subscribers/phone/${phonenumber}`);
+        let planDetailsResponse = await fetch(`http://localhost:9090/api/plans/${planId}`);
 
         if (!userDetailsResponse.ok || !planDetailsResponse.ok) {
             throw new Error("Failed to fetch user or plan details.");
@@ -522,7 +522,7 @@ async function moveNext() {
         };
 
         // Post transaction data
-        let transactionResponse = await fetch("http://localhost:8080/api/transactions", {
+        let transactionResponse = await fetch("http://localhost:9090/api/transactions", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -569,7 +569,7 @@ async function closePaymentModal() {
             dataUsage: 0,
         };
 
-        let response = await fetch("http://localhost:8080/api/currentPlan/saveOrUpdate", {
+        let response = await fetch("http://localhost:9090/api/currentPlan/saveOrUpdate", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(userPlan)
@@ -785,8 +785,8 @@ processPayment();
         }
 
         const [userResponse, planResponse] = await Promise.all([
-            fetch(`http://localhost:8080/api/subscribers/phone/${phonenumber}`),
-            fetch(`http://localhost:8080/api/plans/${planID}`)
+            fetch(`http://localhost:9090/api/subscribers/phone/${phonenumber}`),
+            fetch(`http://localhost:9090/api/plans/${planID}`)
         ]);
 
         if (!userResponse.ok || !planResponse.ok) {
@@ -807,7 +807,7 @@ processPayment();
             transactionStatus: "success"
         };
 
-        let transactionResponse = await fetch("http://localhost:8080/api/transactions", {
+        let transactionResponse = await fetch("http://localhost:9090/api/transactions", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(transaction)

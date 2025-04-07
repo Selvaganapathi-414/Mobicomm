@@ -533,7 +533,7 @@
                         <img style="cursor:pointer; margin-top: 1px;" src="../Images/user.png" onclick="toggleDropdown()" alt="" height="25">
                         <div id="dropdownMenu" class="dropdown-menu">
                          <a href="" style="color:black">My Account</a>
-                         <a href="" style="color: black;" onclick="logout(this)">Logout</a>
+                         <a style="color: black;" onclick="logout(this)">Logout</a>
                         </div>
                      </div>
                 </li>
@@ -708,56 +708,59 @@
   dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
 
 }
-async function logout(clicked) {
+async function logout() {
+ 
+
     let confirmLogout = confirm("Are you sure you want to log out?");
-    if (!confirmLogout) return; // If the user cancels, do nothing
+    if (!confirmLogout) return;
 
     let token = localStorage.getItem("accessToken");
-    let refreshtoken = localStorage.getItem("refreshToken");
+    let rtoken = localStorage.getItem("refreshToken");
 
-    if (!token) {
-        alert("User is not logged in.");
+    if (!token || !rtoken) {
+        alert("Session expired or user not logged in.");
+        window.location.href = "index.html";
         return;
     }
 
-    let tokens = { refreshToken: refreshtoken };
-
     try {
-        const response = await fetch("http://localhost:8080/auth/logout", {
+        // Make sure this URL matches your actual backend URL and port
+        let response = await fetch("http://localhost:9090/auth/logout", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify(tokens) // Prevent null issues
+            body: JSON.stringify({ refreshToken: rtoken }),
+        
         });
 
-        console.log(response);
+       
 
-        if (!response.ok) {
-            alert("Logout failed. Please try again.");
-        } else {
-            // Clear tokens
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-
-            // Show toast message
-            Toastify({
-                text: "Logged out Successfully",
-                duration: 3000,  // Toast visible for 3 seconds
-                gravity: "top",
-                position: "right",
-                backgroundColor: "green",
-            }).showToast();
-
-            // Delay navigation until toast is finished
-            setTimeout(() => {
-                window.location.href = "index.html"; 
-            }, 3000); // Wait for the toast to finish before redirecting
+        if (!(response.ok)) {
+            const errorText = await response.text();
+            console.error("Logout failed with status:", response.status, errorText);
+            // Continue with local logout despite server error
         }
     } catch (error) {
-        console.error( error.message);
-        alert("Something went wrong. Try again.");
+        console.error("Fetch error during logout:", error);
+        // Continue with local logout despite network error
+    } finally {
+        // Always clear tokens from localStorage regardless of server response
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+       
+        Toastify({
+         text: "Logged out Successfully",
+         duration: 2000,
+         gravity: "top",
+         position: "right",
+         backgroundColor: "green",
+     }).showToast(); 
+     
+        window.location.href = "index.html";
+
+           
     }
 }
 
@@ -766,7 +769,7 @@ async function logout(clicked) {
         const token = localStorage.getItem("accessToken");
 
     try {
-        let response = await fetch(`http://localhost:8080/api/both/currentPlan/${userId}`,{
+        let response = await fetch(`http://localhost:9090/api/both/currentPlan/${userId}`,{
             method:"GET",
             headers : {
                 "Content-Type": "application/json",
@@ -816,7 +819,7 @@ async function fetchUserDetails(){
     }
     const token = localStorage.getItem("accessToken");
 
-    await fetch(`http://localhost:8080/api/both/phone/${phoneNumber}`,{
+    await fetch(`http://localhost:9090/api/both/phone/${phoneNumber}`,{
             method:"GET",
             headers : {
                 "Content-Type": "application/json",
@@ -852,7 +855,7 @@ async function fetchUserDetails(){
 function openModal() {
     const token = localStorage.getItem("accessToken");
 
-    fetch(`http://localhost:8080/api/both/phone/${phoneNumber}`,{
+    fetch(`http://localhost:9090/api/both/phone/${phoneNumber}`,{
             method:"GET",
             headers : {
                 "Content-Type": "application/json",
@@ -900,7 +903,7 @@ function saveProfileChanges() {
 
     const token = localStorage.getItem("accessToken");
 
-    fetch(`http://localhost:8080/api/both/${userId}`, {
+    fetch(`http://localhost:9090/api/both/${userId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -934,7 +937,7 @@ async function downloadInvoice(transactionId) {
 
     try {
         // Fetch transaction details from API
-        const response = await fetch(`http://localhost:8080/api/customer/transactions/${transactionId}` ,{
+        const response = await fetch(`http://localhost:9090/api/customer/transactions/${transactionId}` ,{
             method:"GET",
             headers : {
                 "Content-Type": "application/json",
@@ -1049,7 +1052,7 @@ async function fetchUserTransactions(userId) {
     const token = localStorage.getItem("accessToken");
 
     try {
-        const response = await fetch(`http://localhost:8080/api/customer/transactions/user/${userId}`,{
+        const response = await fetch(`http://localhost:9090/api/customer/transactions/user/${userId}`,{
             method:"GET",
             headers : {
                 "Content-Type": "application/json",
