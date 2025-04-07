@@ -74,7 +74,7 @@ public class AuthController {
             userOptional = userRepository.findByUsername(identifier);
         }
 
-        if (userOptional.isPresent() && password.matches(userOptional.get().getPassword())) {
+        if (userOptional.isPresent() && passwordEncoder.matches(password, userOptional.get().getPassword())) {
             User user = userOptional.get();
             return ResponseEntity.ok(Map.of(
                     "accessToken", jwtUtil.generateToken(identifier, user.getRole().getRoleName().name()),
@@ -98,7 +98,7 @@ public class AuthController {
         if (refreshToken != null) {
             revokedTokenRepository.save(new RevokedToken(refreshToken)); // Blacklist refresh token too
         }
-        return ResponseEntity.ok("Logged out successfully.");
+        return ResponseEntity.status(HttpStatus.OK).body("Logged out successfully");
     }
 
 

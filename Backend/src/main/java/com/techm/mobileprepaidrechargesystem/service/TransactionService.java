@@ -6,6 +6,7 @@ import com.techm.mobileprepaidrechargesystem.repository.TransactionRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -18,8 +19,19 @@ public class TransactionService {
     }
     
     
-    public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
+    public List<Transaction> getAllTransactions(String name, String mode) {
+    	List<Transaction> transactions = transactionRepository.findAll();
+    	if(!(mode.equals("All"))) transactions = transactions.stream().filter(user -> user.getTransactionMode().name().equals(mode)).collect(Collectors.toList());
+    	if(name.equals("Success")) {
+            return transactions.stream().filter(user -> (user.getTransactionStatus().name()).equals("SUCCESS")).collect(Collectors.toList());
+    	}
+    	else if(name.equals("Failure")) {
+            return transactions.stream().filter(user -> (user.getTransactionStatus().name()).equals("FAILURE")).collect(Collectors.toList());
+    	}
+    	else if(name.equals("Pending")) {
+            return transactions.stream().filter(user -> (user.getTransactionStatus().name()).equals("PENDING")).collect(Collectors.toList());
+    	}
+    	return transactions;
     }
     
     public List<Transaction> getTransactionsByUserId(Long userId) {

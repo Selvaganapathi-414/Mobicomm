@@ -51,8 +51,8 @@ public class UserController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/admin")
-    public List<User> getNonAdminUsers() {
-        return userService.getAllUsers();
+    public List<User> getNonAdminUsers(@RequestParam String name) {
+        return userService.getAllUsers(name);
     }
 	
 	@PreAuthorize("hasAuthority('ADMIN')")
@@ -120,13 +120,13 @@ public class UserController {
         return ResponseEntity.ok("User status updated to Inactive");
     }
 	
-	@PostMapping("/{userId}/image")
-    public ResponseEntity<byte[]> changeUserImage(@PathVariable Long userId,
-                                                  @RequestParam("file") MultipartFile file) {
-        try {
-            return userService.changeAndFetchUserImage(userId, file);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);  // Handle any errors
-        }
-    }
+//	@PostMapping("/{userId}/image")
+//    public ResponseEntity<byte[]> changeUserImage(@PathVariable Long userId,
+//                                                  @RequestParam("file") MultipartFile file) {
+//        try {
+//            return userService.changeAndFetchUserImage(userId, file);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(null);  // Handle any errors
+//        }
+//    }
 }

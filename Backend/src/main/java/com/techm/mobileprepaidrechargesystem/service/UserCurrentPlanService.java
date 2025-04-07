@@ -35,8 +35,11 @@ public class UserCurrentPlanService {
         this.userCurrentPlanRepository = userCurrentPlanRepository;
     } 
     
-    public List<UserCurrentPlanDetails> getUsersWithExpiringPlans() {
-        return userCurrentPlanRepository.findByPlanExpiryDateBefore(LocalDate.now().plusDays(300));
+    public List<UserCurrentPlanDetails> getUsersWithExpiringPlans(String name) {
+    	if(name.equals("All")) {
+    		return userCurrentPlanRepository.findByPlanExpiryDateBefore(LocalDate.now().plusDays(300));
+    	}
+        return userCurrentPlanRepository.findByPlanExpiryDateBefore(LocalDate.now().plusDays(300)).stream().filter(user -> user.getUsername().toLowerCase().contains(name.toLowerCase())).toList();
     }
 
     public UserCurrentPlanDetails saveOrUpdateUserPlan(UserCurrentPlanDetails userPlanDetails) {

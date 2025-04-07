@@ -1,10 +1,12 @@
 package com.techm.mobileprepaidrechargesystem.controller;
 
 import com.techm.mobileprepaidrechargesystem.exception.ResourceNotFoundException;
+import com.techm.mobileprepaidrechargesystem.model.User;
 import com.techm.mobileprepaidrechargesystem.model.UserCurrentPlanDetails;
 import com.techm.mobileprepaidrechargesystem.service.UserCurrentPlanService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -24,9 +26,9 @@ public class UserCurrentPlanController {
     }
     
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/admin/currentPlan/expiring")
-    public ResponseEntity<?> getExpiringUsers() {
-        List<UserCurrentPlanDetails> users = userCurrentPlanService.getUsersWithExpiringPlans();
+    @GetMapping("/admin/currentPlan/expiring/{name}")
+    public ResponseEntity<?> getExpiringUsers(@PathVariable String name) {
+        List<UserCurrentPlanDetails> users = userCurrentPlanService.getUsersWithExpiringPlans(name);
         if (users.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No users with expiring plans found");
         }

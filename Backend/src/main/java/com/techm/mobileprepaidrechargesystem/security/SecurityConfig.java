@@ -31,7 +31,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
         .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Apply CORS Config
         .authorizeHttpRequests(auth -> auth
-        		.requestMatchers("/auth/**").permitAll()  // Allow OTP request without authentication
+        		.requestMatchers("/auth/**" , "/auth/logout").permitAll()  // Allow OTP request without authentication
         		.requestMatchers("/api/admin/**").hasAuthority("ADMIN")
         		.requestMatchers("/api/customer/**").hasAuthority("CUSTOMER") 
         		.requestMatchers("/api/both/**").hasAnyAuthority("CUSTOMER" , "ADMIN") 
@@ -46,8 +46,8 @@ public class SecurityConfig {
     private UrlBasedCorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://127.0.0.1:5500")); // Allow frontend
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
+        config.setAllowedOrigins(List.of("http://127.0.0.1:5500" , "http://localhost:5500")); // Allow frontend
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH" ,"OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);

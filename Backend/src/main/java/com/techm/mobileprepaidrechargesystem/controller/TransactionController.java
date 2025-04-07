@@ -30,11 +30,13 @@ public class TransactionController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/admin/transactions")
-    public List<Transaction> getAllTransactions() {
-    	
-    	List<Transaction> transactions = transactionService.getAllTransactions();
+    public List<Transaction> getAllTransactions(@RequestParam String name , @RequestParam String mode) {
+		mode = mode.equals("card") ? "credit_debit_card" : mode;
+    	mode = name.equals("Failure") ? "All"  : mode ;
+
+    	List<Transaction> transactions = transactionService.getAllTransactions(name , mode);
     	Collections.reverse(transactions);
-        return transactions;
+    	return transactions;
     }
 
 	@PreAuthorize("hasAuthority('CUSTOMER')")

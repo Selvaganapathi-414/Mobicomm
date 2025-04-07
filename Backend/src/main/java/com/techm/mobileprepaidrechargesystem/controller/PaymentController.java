@@ -74,7 +74,6 @@ public class PaymentController {
             String email = (String) payload.get("email");
             String name = (String) payload.get("name");
             double amount = Double.parseDouble(payload.get("amount").toString()); // Convert paise to rupees
-            System.out.println("Hello");
 
             // Send Email Notification
             emailService.sendPaymentSuccessEmail(email, name, paymentId, amount);

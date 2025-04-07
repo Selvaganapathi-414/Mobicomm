@@ -4,8 +4,10 @@ import com.techm.mobileprepaidrechargesystem.model.User;
 import com.techm.mobileprepaidrechargesystem.model.User.AccountStatus;
 import com.techm.mobileprepaidrechargesystem.repository.UserRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +17,9 @@ import java.util.Optional;
 
 @Service
 public class UserService {
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
     private final UserRepository userRepository;
 
@@ -35,8 +40,18 @@ public class UserService {
         return userRepository.save(user);
     }
     
-    public List<User> getAllUsers() {
-        return userRepository.findByRoleRoleId(1L);
+    public List<User> getAllUsers(String name) {
+    	if(name.equals("All")) {
+            return userRepository.findByRoleRoleId(1L); 
+    	}
+    	else if(name.equals("Active")) {
+        	return userRepository.findByRoleRoleId(1L).stream().filter(user -> user.getUserAccountStatus().name().equals("ACTIVE")).toList();
+    	}
+    	else if(name.equals("Inactive")) {
+        	return userRepository.findByRoleRoleId(1L).stream().filter(user -> user.getUserAccountStatus().name().equals("INACTIVE")).toList();
+    	}
+    	return userRepository.findByRoleRoleId(1L).stream().filter(user -> (user.getUserFname()+user.getUserLname()).toLowerCase().contains(name.toLowerCase())).toList();
+
     }
     
     public User getUserById(Long userId) {
@@ -102,29 +117,30 @@ public class UserService {
 
 	public boolean changeAdminPassword(long userId, String password) {
 		User user = userRepository.findById(userId).get();
-		user.setPassword(password);
+		String encodedPassword = passwordEncoder.encode(password); // ✅ Hashing here
+	    user.setPassword(encodedPassword);
 		userRepository.save(user);
 		return true;
 	}
 	
-	public ResponseEntity<byte[]> changeAndFetchUserImage(Long userId, MultipartFile file) throws IOException {
-        // If the file is not null, store (or update) the image
-        if (file != null) {
-            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-
-            // Update the user image (it will overwrite the old image)
-            user.setUserImage(file.getBytes());
-            userRepository.save(user);
-        }
-
-        // Fetch updated image from DB
-        Optional<User> userOpt = userRepository.findById(userId);
-        if (userOpt.isPresent() && userOpt.get().getUserImage() != null) {
-            byte[] imageData = userOpt.get().getUserImage();
-            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageData);  // Return the image data
-        } else {
-            return ResponseEntity.notFound().build();  // Image not found in DB
-        }
-    }
+//	public ResponseEntity<byte[]> changeAndFetchUserImage(Long userId, MultipartFile file) throws IOException {
+//        // If the file is not null, store (or update) the image
+//        if (file != null) {
+//            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+//
+//            // Update the user image (it will overwrite the old image)
+//            user.setUserImage(file.getBytes());
+//            userRepository.save(user);
+//        }
+//
+//        // Fetch updated image from DB
+//        Optional<User> userOpt = userRepository.findById(userId);
+//        if (userOpt.isPresent() && userOpt.get().getUserImage() != null) {
+//            byte[] imageData = userOpt.get().getUserImage();
+//            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageData);  // Return the image data
+//        } else {
+//            return ResponseEntity.notFound().build();  // Image not found in DB
+//        }
+//    }
 
 }
