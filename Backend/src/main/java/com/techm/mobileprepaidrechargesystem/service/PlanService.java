@@ -50,7 +50,7 @@ public class PlanService {
 
             // Apply updates based on category type
             switch (categoryName) {
-                case "TopUpPlans":
+                case "TopupPlans":
                     plan.setPlanTalkTime(planDetails.getPlanTalkTime());
                     break;
                 case "VoiceOnlyPlans":

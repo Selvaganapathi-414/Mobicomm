@@ -538,6 +538,13 @@
         </div>
         <script>
 
+document.addEventListener("DOMContentLoaded", async function () {
+    if(!localStorage.getItem("accessToken")){
+        window.location.href = "unauthorized.html";
+        return;
+    }
+});
+
             function openchangePasswordModal(){
                 document.getElementById("openchangePasswordModal").style.display = "block"
             }

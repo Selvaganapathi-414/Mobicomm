@@ -13,8 +13,6 @@ import com.techm.mobileprepaidrechargesystem.exception.InvalidOtpException;
 public class OtpController {
 
     private final OtpService otpService;
-    
-    
 
     public OtpController(OtpService otpService) {
         this.otpService = otpService;

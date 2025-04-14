@@ -56,7 +56,6 @@ public class OtpService {
 
     public boolean verifyOtp(String phoneNumber, String otp) {
         Optional<OtpVerification> otpRecord = otpRepository.findByPhoneNumber("+"+(phoneNumber.trim()));
-        System.out.println(otpRecord.get());
         if (otpRecord.isPresent()) {
             OtpVerification storedOtp = otpRecord.get();
             // Check if OTP matches and is valid for 5 minutes

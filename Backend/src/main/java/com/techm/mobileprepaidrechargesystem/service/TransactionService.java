@@ -31,6 +31,10 @@ public class TransactionService {
     	else if(name.equals("Pending")) {
             return transactions.stream().filter(user -> (user.getTransactionStatus().name()).equals("PENDING")).collect(Collectors.toList());
     	}
+    	else if(!(name.equals("All"))) {
+    		transactions = transactions.stream().filter(user -> (user.getUser().getUserFname()+user.getUser().getUserLname()).toLowerCase().contains(name)).collect(Collectors.toList());
+    	}
+ 
     	return transactions;
     }
     

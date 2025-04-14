@@ -65,7 +65,7 @@ public class PlanController {
         planService.deletePlan(planId);
         return ResponseEntity.ok("Plan deleted successfully");
     }
-	
+	 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/admin/deleteByCategory/{categoryId}")
     public ResponseEntity<String> deletePlansByCategory(@PathVariable Long categoryId) {

@@ -32,7 +32,6 @@ public class PlanCategoryController {
 	@GetMapping("/both/Category/getCategory")
 	public List<PlanCategory> getPlanCategories(){
 		return planCategoryService.getAllCategories();
-		
 	}
 	
 	@PreAuthorize("hasAuthority('ADMIN')")

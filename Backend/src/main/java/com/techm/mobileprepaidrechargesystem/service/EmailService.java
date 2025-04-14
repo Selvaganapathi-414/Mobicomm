@@ -32,11 +32,11 @@ public class EmailService {
 		// TODO Auto-generated method stub
 		SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);
-        message.setSubject("Payment Successful - MobiComm Recharge");
+        message.setSubject("Alert - MobiComm Recharge");
         
         String emailBody = "Dear " + name + ",\n\n"
-                + "Your Plan is Expiring soon , please Recharge to explore the internet"
-                + "Thank you "
+                + "Your Plan is Expiring soon , please Recharge to explore the internet\n\n"
+                + "Thank you\n\n "
                 + " - MobiComm Recharge.";
 
         message.setText(emailBody);

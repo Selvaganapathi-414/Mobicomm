@@ -52,7 +52,6 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Login for both admin (username) and user (phone number)
     @PermitAll
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
@@ -61,7 +60,7 @@ public class AuthController {
 
         Optional<User> userOptional;
 
-        if (identifier.matches("\\d+")) { // If identifier is numeric, assume it's a phone number
+        if (identifier.matches("\\d+")) { 
             userOptional = userRepository.findByUserPhonenumber(identifier);
             if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -70,7 +69,7 @@ public class AuthController {
                     "refreshToken", jwtUtil.generateRefreshToken(identifier)
             ));
             }
-        } else { // Otherwise, assume it's a username
+        } else {
             userOptional = userRepository.findByUsername(identifier);
         }
 
@@ -85,24 +84,22 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
 
-    // Logout endpoint
     @PermitAll
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String token,
                                          @RequestBody Map<String, String> request) {
-        token = token.substring(7); // Remove "Bearer " from token
+        token = token.substring(7); 
 
-        revokedTokenRepository.save(new RevokedToken(token)); // Save to blacklist
+        revokedTokenRepository.save(new RevokedToken(token));
 
         String refreshToken = request.get("refreshToken");
         if (refreshToken != null) {
-            revokedTokenRepository.save(new RevokedToken(refreshToken)); // Blacklist refresh token too
+            revokedTokenRepository.save(new RevokedToken(refreshToken));
         }
         return ResponseEntity.status(HttpStatus.OK).body("Logged out successfully");
     }
 
 
-    // Refresh token endpoint
     @PermitAll
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody Map<String, String> request) {

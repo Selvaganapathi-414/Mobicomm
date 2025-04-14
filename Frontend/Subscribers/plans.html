@@ -562,6 +562,12 @@ svg {
 </body>
 
 <script>
+  document.addEventListener("DOMContentLoaded", async function () {
+    if(!localStorage.getItem("accessToken")){
+        window.location.href = "unauthorized.html";
+        return;
+    }
+});
 
 
 let arr=[]
@@ -1030,6 +1036,7 @@ async function moveNext() {
 
         // Construct transaction data
         const transactionData = {
+
             user: { userId: userDetails.userId }, // Reference to User entity
             plan: { planId: Number(planId) }, // Reference to Plan entity
             transactionMode:"empty", // Set based on user choice

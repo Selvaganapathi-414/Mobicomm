@@ -481,6 +481,12 @@ button#close{
 </body>
 
 <script>
+  document.addEventListener("DOMContentLoaded", async function () {
+    if(!localStorage.getItem("accessToken")){
+        window.location.href = "unauthorized.html";
+        return;
+    }
+});
 
 document.getElementById("paymentsbutton").style.opacity = '50%';
       document.getElementById("paymentsbutton").style.cursor = 'no-drop';

@@ -56,7 +56,7 @@ public class PaymentController {
 
 	        Map<String, Object> responseBody = response.getBody();
 	        Map<String, Object> result = new HashMap<>();
-	        result.put("method", responseBody.get("method")); // Extract payment method
+	        result.put("method", responseBody.get("method"));
 	        
 	        return ResponseEntity.ok(result);
 	    } catch (Exception e) {
@@ -73,9 +73,8 @@ public class PaymentController {
             String paymentId = (String) payload.get("razorpay_payment_id");
             String email = (String) payload.get("email");
             String name = (String) payload.get("name");
-            double amount = Double.parseDouble(payload.get("amount").toString()); // Convert paise to rupees
+            double amount = Double.parseDouble(payload.get("amount").toString()); 
 
-            // Send Email Notification
             emailService.sendPaymentSuccessEmail(email, name, paymentId, amount);
             return ResponseEntity.ok("Payment success email sent.");
         } catch (Exception e) {

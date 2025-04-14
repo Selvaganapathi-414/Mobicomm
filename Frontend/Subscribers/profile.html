@@ -696,6 +696,13 @@
     
     
     <script>
+
+document.addEventListener("DOMContentLoaded", async function () {
+    if(!localStorage.getItem("accessToken")){
+        window.location.href = "unauthorized.html";
+        return;
+    }
+});
     const phoneNumber = localStorage.getItem("phonenumber");
     let userId;
     window.onload = function () {

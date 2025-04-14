@@ -544,6 +544,7 @@
                             <label for="addVoiceValidityVoice">Voice Validity:</label>
                             <input type="text" id="addVoiceValidityVoice" name="addVoiceValidity" required>
                         </div>
+                        <p>0 - Unlimited</p>
                 
                         <div class="form-group">
                             <label for="addSmsValidityVoice">SMS Validity:</label>
@@ -687,6 +688,7 @@
                                 <label for="editVoiceValidity">Voice Validity:</label>
                                 <input type="text" id="editVoiceValidityVoice" name="editVoiceValidity" required>
                             </div>
+                            <p>0 - Unlimited</p>
                     
                             <div class="form-group">
                                 <label for="editSmsValidity">SMS Validity:</label>
@@ -750,6 +752,13 @@
 
 </body>
 <script>
+
+document.addEventListener("DOMContentLoaded", async function () {
+    if(!localStorage.getItem("accessToken")){
+        window.location.href = "unauthorized.html";
+        return;
+    }
+});
 
 searchInput.addEventListener("input" , () =>{
 
@@ -995,7 +1004,7 @@ document.addEventListener("DOMContentLoaded", renderCategory);
             container.innerHTML += sectionHTML;
             }
 
-            else if(category.categoryName == "TopUpPlans"){
+            else if(category.categoryName == "TopupPlans"){
                 let sectionHTML = `
                 <section class="content" id="${category.categoryName}">
                     <h2>${category.categoryDisplayName}</h2>
@@ -1188,7 +1197,7 @@ let categoryName;
         else if(category=="VoiceOnlyPlans"){
             document.getElementById("addModalVoice").style.display="block";
         }
-        else if(category=="TopUpPlans"){
+        else if(category=="TopupPlans"){
             document.getElementById("addModalTopup").style.display="block";
         }
         else{
@@ -1246,7 +1255,7 @@ async function loadPlans(category) {
                     </tr>
                 `;
             } 
-            else if (category === "TopUpPlans") {
+            else if (category === "TopupPlans") {
                 row = `
                     <tr>
                         <td>${plan.planId}</td>
@@ -1255,11 +1264,11 @@ async function loadPlans(category) {
                         <td>₹${plan.planTalkTime}</td>
                         <td>
                             <button class="tooltip">
-                            <span class="material-icons" onclick="openEditModal('TopUpPlans', ${plan.planId})">edit</span>
+                            <span class="material-icons" onclick="openEditModal('TopupPlans', ${plan.planId})">edit</span>
                             <span class="tooltip-text">Edit</span>
                         </button>
                         <button class="tooltip">
-                            <span class="material-icons" onclick="deletePlan('TopUpPlans', ${plan.planId})">delete</span>
+                            <span class="material-icons" onclick="deletePlan('TopupPlans', ${plan.planId})">delete</span>
                             <span class="tooltip-text">Delete</span>
                         </button>                        
                         </td>
@@ -1272,7 +1281,7 @@ async function loadPlans(category) {
                         <td>${plan.planId}</td>
                         <td>₹${plan.planPrice}</td>
                         <td>${plan.planValidityInDays} Days</td>
-                        <td>${plan.planVoiceValidity}</td>
+                        <td>${plan.planVoiceValidity == 0 ? "Unlimited" : plan.planVoiceValidity}</td>
                         <td>${plan.planSmsValidity ?? 0} SMS/Day</td>
                         <td>
                             <button class="tooltip">
@@ -1725,10 +1734,13 @@ function validateInput(inputId, errorId) {
         const rows = table.querySelectorAll("tr");
         let csvContent = "";
 
-        rows.forEach(row => {
+
+        rows.forEach((row , index) => {
             let rowData = []; 
             row.querySelectorAll("th, td").forEach(cell => {
-                rowData.push(cell.innerText);
+                if (!(index === rows.length)) {
+                    rowData.push(cell.innerText);
+                }    
             });
             csvContent += rowData.join(",") + "\n";
         });
@@ -1861,7 +1873,7 @@ async function openEditModal(tableType, planId) {
         
         const plan = await response.json(); // Convert response to JSON
 
-        if(tableType == "TopUpPlans"){
+        if(tableType == "TopupPlans"){
         document.getElementById('editPlanIdTopup').value = plan.planId;
 
         document.getElementById('editPriceTopup').value = plan.planPrice;
@@ -1875,7 +1887,7 @@ async function openEditModal(tableType, planId) {
         document.getElementById('editPlanIdVoice').value = plan.planId;
         document.getElementById('editPriceVoice').value = plan.planPrice;
         document.getElementById('editValidityVoice').value = plan.planValidityInDays;
-        document.getElementById('editVoiceValidityVoice').value = plan.planVoiceValidity == null ? "Unlimited" :plan.planVoiceValidity; // Default to empty if null
+        document.getElementById('editVoiceValidityVoice').value = plan.planVoiceValidity == 0 ? "Unlimited" :plan.planVoiceValidity; // Default to empty if null
         document.getElementById('editSmsValidityVoice').value = plan.planSmsValidity || 0; // Default to 0 if null
 
         // Show the edit modal
@@ -1953,7 +1965,7 @@ async function savePlan() {
         }
 
         // Different fields based on the plan type
-        if (currentTable === "TopUpPlans") {
+        if (currentTable === "TopupPlans") {
             planId = document.getElementById('editPlanIdTopup').value;
             updatedPlan.planId = planId;
             updatedPlan.planPrice = (document.getElementById('editPriceTopup').value);
@@ -2012,7 +2024,7 @@ async function savePlan() {
         // Close the appropriate modal
         const modalId = currentTable === "DataPlans" ? 'editModalData' :
                         currentTable === "VoiceOnlyPlans" ? 'editModalVoice' :
-                        currentTable === "TopUpPlans" ? 'editModalTopup' : 'editModal';
+                        currentTable === "TopupPlans" ? 'editModalTopup' : 'editModal';
         
         document.getElementById(modalId).style.display = 'none';
 
@@ -2052,7 +2064,7 @@ function closeEditModal() {
         document.getElementById('editModalData').style.display = 'none';
     } else if (currentTable === "VoiceOnlyPlans") {
         document.getElementById('editModalVoice').style.display = 'none';
-    } else if (currentTable === "TopUpPlans") {
+    } else if (currentTable === "TopupPlans") {
         document.getElementById('editModalTopup').style.display = 'none';
     } else {
         document.getElementById('editModal').style.display = 'none';
@@ -2105,12 +2117,12 @@ function closeEditModal() {
             planSmsValidity: document.getElementById("addSmsValidityVoice").value
         };
 
-        document.getElementById("addPlanPrice").value ="";
-        document.getElementById("addValidity").value ="";
-        document.getElementById("addDataPerDay").value ="";
-        document.getElementById("addSmsValidity").value ="";
-       
-    } else if (categoryName == "TopUpPlans") {
+        document.getElementById("addPriceVoice").value ="";
+        document.getElementById("addValidityVoice").value ="";
+        document.getElementById("addVoiceValidityVoice").value ="";
+        document.getElementById("addSmsValidityVoice").value ="";
+        
+    } else if (categoryName == "TopupPlans") {
         // Top-Up Plan
         planData = {
             planPrice: document.getElementById("addPriceTopup").value,

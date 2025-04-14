@@ -7,6 +7,7 @@ import com.techm.mobileprepaidrechargesystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +20,7 @@ import java.util.Optional;
 public class UserService {
 	
 	@Autowired
-	private PasswordEncoder passwordEncoder;
+	private BCryptPasswordEncoder passwordEncoder;
 
     private final UserRepository userRepository;
 
@@ -108,12 +109,15 @@ public class UserService {
 
 	public boolean isValidPassword(long userId , String userPassword) {
 		Optional<User> user = userRepository.findById(userId);
-		System.out.println(user.get());
-		if(user.get().getPassword().equals(userPassword)) {
-			return true;
+		
+		if (user.isPresent()) {
+			String hashedPassword = user.get().getPassword();
+			return passwordEncoder.matches(userPassword, hashedPassword);
 		}
+		
 		return false;
 	}
+
 
 	public boolean changeAdminPassword(long userId, String password) {
 		User user = userRepository.findById(userId).get();
